@@ -23,3 +23,5 @@ export class Verification extends CoreEntity {
     this.code = /* Math.random().toString(36).substring(2) */ uuidv4();
   }
 }
+
+// 왜 이건 스키마에 안 올라갈까

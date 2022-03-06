@@ -1,30 +1,25 @@
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import {
   MiddlewareConsumer,
   Module,
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
+// import { join } from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { GraphQLModule } from '@nestjs/graphql';
-import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
-import { JwtModule } from './jwt/jwt.module';
-import { MailModule } from './mail/mail.module';
-import { CommonModule } from './common/common.module';
-import { JwtMiddleware } from './jwt/jwt.middleware';
-import { User } from './users/entities/user.entity';
-import { Verification } from './users/entities/verification.entity';
 import * as Joi from 'joi';
+import { UsersModule } from './users/users.module';
+import { User } from './users/entities/user.entity';
+import { JwtModule } from './jwt/jwt.module';
+import { JwtMiddleware } from './jwt/jwt.middleware';
+import { Verification } from './users/entities/verification.entity';
+import { MailModule } from './mail/mail.module';
+import { AuthModule } from './auth/auth.module';
+import { ApolloDriver } from '@nestjs/apollo';
 
 @Module({
   imports: [
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      autoSchemaFile: true,
-      context: async ({ req }) => ({ user: req['user'] }),
-    }),
     ConfigModule.forRoot({
       isGlobal: true, // application 어디서나 config module에 접근 가능하도록.
       envFilePath: process.env.NODE_ENV === 'dev' ? '.env.dev' : '.env.test',
@@ -59,7 +54,6 @@ import * as Joi from 'joi';
       autoSchemaFile: true,
       context: async ({ req }) => ({ user: req['user'] }), // context is called each req.
     }),
-    UsersModule,
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,
     }),
@@ -68,6 +62,7 @@ import * as Joi from 'joi';
       domain: process.env.MAILGUN_DOMAIN_NAME,
       fromEmail: process.env.MAILGUN_FROM_EMAIL,
     }),
+    UsersModule,
     AuthModule,
   ],
   controllers: [],

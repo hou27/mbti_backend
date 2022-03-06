@@ -1,4 +1,3 @@
-// import got from 'got';
 import axios from 'axios';
 import * as FormData from 'form-data';
 import { Inject, Injectable } from '@nestjs/common';
@@ -13,8 +12,9 @@ export class MailService {
     // this.sendEmail('testing', 'test');
   }
 
-  private async sendEmail(
-    // async sendEmail( // remove private to test
+  // private async sendEmail(
+  async sendEmail(
+    // remove private to test
     /*to: string,*/
     subject: string,
     template: string,
@@ -27,24 +27,6 @@ export class MailService {
     form.append('template', template);
     emailVars.forEach((eVar) => form.append(`v:${eVar.key}`, eVar.value));
 
-    // try {
-    //   await got.post(
-    //     `https://api.mailgun.net/v3/${this.options.domain}/messages`,
-    //     {
-    //       // method: 'POST',
-    //       headers: {
-    //         Authorization: `Basic ${Buffer.from(
-    //           `api:${this.options.apiKey}`,
-    //         ).toString('base64')}`,
-    //       },
-    //       body: form,
-    //     },
-    //   );
-    //   return true;
-    // } catch (error) {
-    //   // console.log(error);
-    //   return false;
-    // }
     try {
       await axios.post(
         `https://api.mailgun.net/v3/${this.options.domain}/messages`,

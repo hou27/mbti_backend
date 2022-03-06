@@ -10,6 +10,14 @@ import * as bcrypt from 'bcrypt';
 import { InternalServerErrorException } from '@nestjs/common';
 import { IsBoolean, IsEmail, IsEnum, IsString } from 'class-validator';
 
+export enum UserRole {
+  Client = 'Client',
+  Owner = 'Owner',
+  Delivery = 'Delivery',
+}
+
+registerEnumType(UserRole, { name: 'UserRole' }); // for graphql
+
 // Fix err : Schema must contain uniquely named types but contains multiple types named "User".
 @InputType('UserInputType', { isAbstract: true })
 @ObjectType()

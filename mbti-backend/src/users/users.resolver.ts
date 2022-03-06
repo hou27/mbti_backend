@@ -6,12 +6,11 @@ import {
   CreateAccountOutput,
 } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
-import { UseGuards } from '@nestjs/common';
-import { AuthGuard } from 'src/auth/auth.guard';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 import { VerifyEmailInput, VerifyEmailOutput } from './dtos/verify-email.dto';
+import { Role } from 'src/auth/role.decorator';
 
 @Resolver((of) => User)
 export class UserResolver {
@@ -21,7 +20,6 @@ export class UserResolver {
   async createAccount(
     @Args('input') createAccountInput: CreateAccountInput,
   ): Promise<CreateAccountOutput> {
-    console.log('on');
     return this.usersService.createAccount(createAccountInput);
   }
 
@@ -31,14 +29,14 @@ export class UserResolver {
   }
 
   @Query((returns) => User)
-  // @Role(['Any']) // set metadata
+  @Role(['Any']) // set metadata
   me(@AuthUser() authUser: User) {
     // decorator has to return value
     return authUser;
   }
 
   @Query((returns) => UserProfileOutput)
-  // @Role(['Any'])
+  @Role(['Any'])
   async userProfile(
     @Args() userProfileInput: UserProfileInput,
   ): Promise<UserProfileOutput> {
@@ -46,7 +44,7 @@ export class UserResolver {
   }
 
   @Mutation((returns) => EditProfileOutput)
-  // @Role(['Any'])
+  @Role(['Any'])
   async editProfile(
     @AuthUser() authUser: User,
     @Args('input') editProfileInput: EditProfileInput,

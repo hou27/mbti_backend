@@ -8,3 +8,6 @@ export const AuthUser = createParamDecorator(
     return user;
   },
 );
+
+// Create Decorator
+// export const [decorator name] = createParamDecorator()
