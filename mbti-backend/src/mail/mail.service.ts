@@ -1,4 +1,5 @@
 // import got from 'got';
+import axios from 'axios';
 import * as FormData from 'form-data';
 import { Inject, Injectable } from '@nestjs/common';
 import { CONFIG_OPTIONS } from 'src/common/common.constants';
@@ -44,6 +45,24 @@ export class MailService {
     //   // console.log(error);
     //   return false;
     // }
+    try {
+      await axios.post(
+        `https://api.mailgun.net/v3/${this.options.domain}/messages`,
+        {
+          // method: 'POST',
+          headers: {
+            Authorization: `Basic ${Buffer.from(
+              `api:${this.options.apiKey}`,
+            ).toString('base64')}`,
+          },
+          body: form,
+        },
+      );
+      return true;
+    } catch (error) {
+      // console.log(error);
+      return false;
+    }
   }
 
   sendVerificationEmail(email: string, code: string) {

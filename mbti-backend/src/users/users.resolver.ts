@@ -21,6 +21,7 @@ export class UserResolver {
   async createAccount(
     @Args('input') createAccountInput: CreateAccountInput,
   ): Promise<CreateAccountOutput> {
+    console.log('on');
     return this.usersService.createAccount(createAccountInput);
   }
 

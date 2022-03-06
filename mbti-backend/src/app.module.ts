@@ -69,7 +69,6 @@ import * as Joi from 'joi';
       fromEmail: process.env.MAILGUN_FROM_EMAIL,
     }),
     AuthModule,
-    CommonModule,
   ],
   controllers: [],
   providers: [],
