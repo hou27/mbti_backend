@@ -11,7 +11,7 @@ npm i -g @nestjs/cli
 ```
 
 ```
-npm i @nestjs/graphql graphql apollo-server-express
+npm i @nestjs/graphql @nestjs/apollo graphql apollo-server-express
 ```
 
 ### Type ORM
