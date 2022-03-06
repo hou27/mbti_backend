@@ -10,13 +10,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { UsersModule } from './users/users.module';
-import { User } from './users/entities/user.entity';
-import { JwtModule } from './jwt/jwt.module';
-import { JwtMiddleware } from './jwt/jwt.middleware';
-import { Verification } from './users/entities/verification.entity';
-import { MailModule } from './mail/mail.module';
-import { AuthModule } from './auth/auth.module';
 import { ApolloDriver } from '@nestjs/apollo';
+import { JwtMiddleware } from './jwt/jwt.middleware';
+import { JwtModule } from './jwt/jwt.module';
+import { User } from './users/entities/user.entity';
 
 @Module({
   imports: [
@@ -47,7 +44,7 @@ import { ApolloDriver } from '@nestjs/apollo';
       synchronize: process.env.NODE_ENV !== 'prod',
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
-      entities: [User, Verification],
+      entities: [User],
     }),
     GraphQLModule.forRoot({
       driver: ApolloDriver,
@@ -57,13 +54,7 @@ import { ApolloDriver } from '@nestjs/apollo';
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,
     }),
-    MailModule.forRoot({
-      apiKey: process.env.MAILGUN_API_KEY,
-      domain: process.env.MAILGUN_DOMAIN_NAME,
-      fromEmail: process.env.MAILGUN_FROM_EMAIL,
-    }),
     UsersModule,
-    AuthModule,
   ],
   controllers: [],
   providers: [],
