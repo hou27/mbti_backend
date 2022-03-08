@@ -3,6 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { JwtService } from 'src/jwt/jwt.service';
+import {
+  CreateAccountInput,
+  CreateAccountOutput,
+} from './dtos/create-account.dto';
+import { LoginInput, LoginOutput } from './dtos/login.dto';
+import { UserProfileOutput } from './dtos/user-profile.dto';
 
 @Injectable()
 export class UserService {
@@ -12,75 +18,90 @@ export class UserService {
     private readonly jwtService: JwtService,
   ) {}
 
-  // async createAccount({
-  //   email,
-  //   password,
-  // }: CreateAccountInput): Promise<CreateAccountOutput> {
-  //   try {
-  //     const exists = await this.users.findOne({ email });
-  //     if (exists) {
-  //       return { ok: false, error: 'There is a user with that email already' };
-  //     }
-  //     const user = await this.users.save(
-  //       this.users.create({ email, password }),
-  //     );
+  async createAccount({
+    name,
+    email,
+    password,
+  }: CreateAccountInput): Promise<CreateAccountOutput> {
+    try {
+      const exists = await this.users.findOne({ email });
+      if (exists) {
+        return { ok: false, error: 'There is a user with that email already' };
+      }
+      const user = await this.users.save(
+        this.users.create({ name, email, password }),
+      );
 
-  //     const verification = await this.verifications.save(
-  //       this.verifications.create({ user }),
-  //     );
+      // const verification = await this.verifications.save(
+      //   this.verifications.create({ user }),
+      // );
 
-  //     this.mailService.sendVerificationEmail(user.email, verification.code);
+      // this.mailService.sendVerificationEmail(user.email, verification.code);
 
-  //     return { ok: true };
-  //   } catch (e) {
-  //     return { ok: false, error: "Couldn't create account" };
-  //   }
-  // }
+      return { ok: true };
+    } catch (e) {
+      console.log(e);
+      return { ok: false, error: "Couldn't create account" };
+    }
+  }
 
-  // async login({ email, password }: LoginInput): Promise<LoginOutput> {
-  //   // make a JWT and give it to the user
-  //   try {
-  //     const user = await this.users.findOne(
-  //       { email },
-  //       { select: ['id', 'password'] },
-  //       // tell findOne that I want to select things(load from db)
+  async login({ email, password }: LoginInput): Promise<LoginOutput> {
+    // make a JWT and give it to the user
+    try {
+      const user = await this.users.findOne(
+        { email },
+        { select: ['id', 'password'] },
+        // tell findOne that I want to select things(load from db)
 
-  //       // select 하기 전엔 전부 불러와지지만(select: false인 Column제외)
-  //       // pw를 불러오기 위해 select해주면 select한 것만 불러와짐.
-  //     );
-  //     if (!user) {
-  //       return {
-  //         ok: false,
-  //         error: 'User not found',
-  //       };
-  //     }
-  //     const passwordCorrect = await user.checkPassword(password);
-  //     if (!passwordCorrect) {
-  //       return {
-  //         ok: false,
-  //         error: 'Wrong password',
-  //       };
-  //     }
-  //     const token = this.jwtService.sign(
-  //       user.id,
-  //       /*{ id: user.id }*/
-  //     );
-  //     // const token = jwt.sign(
-  //     // 	{ id: user.id },
-  //     // 	this.config.get('SECRET_KEY') /* process.env.SECRET_KEY */
-  //     // );
-  //     return {
-  //       ok: true,
-  //       token,
-  //     };
-  //   } catch (error) {
-  //     return {
-  //       ok: false,
-  //       error: "Can't log user in.",
-  //     };
-  //   }
-  // }
+        // select 하기 전엔 전부 불러와지지만(select: false인 Column제외)
+        // pw를 불러오기 위해 select해주면 select한 것만 불러와짐.
+      );
+      if (!user) {
+        return {
+          ok: false,
+          error: 'User not found',
+        };
+      }
+      const passwordCorrect = await user.checkPassword(password);
+      if (!passwordCorrect) {
+        return {
+          ok: false,
+          error: 'Wrong password',
+        };
+      }
+      const token = this.jwtService.sign(
+        user.id,
+        /*{ id: user.id }*/
+      );
+      // const token = jwt.sign(
+      // 	{ id: user.id },
+      // 	this.config.get('SECRET_KEY') /* process.env.SECRET_KEY */
+      // );
+      return {
+        ok: true,
+        token,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: "Can't log user in.",
+      };
+    }
+  }
 
+  async findById(id: number): Promise<UserProfileOutput> {
+    try {
+      const user = await this.users./*findOne*/ findOneOrFail({ id }); // findOneOrFail throw an Error.
+      // if (user) {
+      return {
+        ok: true,
+        user: user,
+      };
+      // }
+    } catch (error) {
+      return { ok: false, error: 'User Not Found' };
+    }
+  }
   // async editProfile(
   //   userId: number,
   //   { email, password }: EditProfileInput,

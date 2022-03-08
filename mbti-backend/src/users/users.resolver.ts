@@ -1,4 +1,14 @@
+import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
+import { AuthUser } from 'src/auth/auth-user.decorator';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { CoreOutput } from 'src/common/dtos/output.dto';
+import {
+  CreateAccountInput,
+  CreateAccountOutput,
+} from './dtos/create-account.dto';
+import { LoginInput, LoginOutput } from './dtos/login.dto';
+import { meOutput } from './dtos/me.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './users.service';
 
@@ -6,28 +16,29 @@ import { UserService } from './users.service';
 export class UserResolver {
   constructor(private readonly usersService: UserService) {}
 
-  // @Mutation((returns) => CreateAccountOutput)
-  // async createAccount(
-  //   @Args('input') createAccountInput: CreateAccountInput,
-  // ): Promise<CreateAccountOutput> {
-  //   return this.usersService.createAccount(createAccountInput);
-  // }
-
-  @Query((returns) => Boolean)
-  rootQuery(): Boolean {
-    return true;
+  @Query((returns) => User)
+  @UseGuards(AuthGuard)
+  me(@AuthUser() authUser: User) {
+    // decorator has to return value
+    return authUser;
   }
-  // @Mutation((returns) => LoginOutput)
-  // async login(@Args('input') loginInput: LoginInput): Promise<LoginOutput> {
-  //   return this.usersService.login(loginInput);
+
+  @Mutation((returns) => CreateAccountOutput)
+  async createAccount(
+    @Args('input') createAccountInput: CreateAccountInput,
+  ): Promise<CreateAccountOutput> {
+    return this.usersService.createAccount(createAccountInput);
+  }
+
+  // @Query((returns) => CoreOutput)
+  // rootQuery(): CoreOutput {
+  //   return { ok: true };
   // }
 
-  // @Query((returns) => User)
-  // @Role(['Any']) // set metadata
-  // me(@AuthUser() authUser: User) {
-  //   // decorator has to return value
-  //   return authUser;
-  // }
+  @Mutation((returns) => LoginOutput)
+  async login(@Args('input') loginInput: LoginInput): Promise<LoginOutput> {
+    return this.usersService.login(loginInput);
+  }
 
   // @Query((returns) => UserProfileOutput)
   // @Role(['Any'])
