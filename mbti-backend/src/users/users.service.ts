@@ -21,6 +21,7 @@ export class UserService {
   async createAccount({
     name,
     email,
+    gender,
     password,
   }: CreateAccountInput): Promise<CreateAccountOutput> {
     try {
@@ -29,7 +30,7 @@ export class UserService {
         return { ok: false, error: 'There is a user with that email already' };
       }
       const user = await this.users.save(
-        this.users.create({ name, email, password }),
+        this.users.create({ name, email, gender, password }),
       );
 
       // const verification = await this.verifications.save(

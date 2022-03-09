@@ -8,15 +8,14 @@ import { CoreEntity } from 'src/common/entities/core.entity';
 import { Column, Entity, BeforeInsert, BeforeUpdate, OneToMany } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { InternalServerErrorException } from '@nestjs/common';
-import { IsBoolean, IsEmail, IsString } from 'class-validator';
+import { IsBoolean, IsDate, IsEmail, IsEnum, IsString } from 'class-validator';
 
-// export enum UserRole {
-//   Client = 'Client',
-//   Owner = 'Owner',
-//   Delivery = 'Delivery',
-// }
+export enum Gender {
+  Male = 'Male',
+  Female = 'Female',
+}
 
-// registerEnumType(UserRole, { name: 'UserRole' }); // for graphql
+registerEnumType(Gender, { name: 'Gender' }); // for graphql
 
 // Fix err : Schema must contain uniquely named types but contains multiple types named "User".
 @InputType('UserInputType', { isAbstract: true })
@@ -28,10 +27,20 @@ export class User extends CoreEntity {
   @IsString()
   name: string;
 
+  @Field((type) => String, { nullable: true })
+  @Column({ nullable: true })
+  @IsString()
+  profileImg: string;
+
   @Field((type) => String)
   @Column({ unique: true }) // email should be unique.
   @IsEmail()
   email: string;
+
+  @Field((type) => Gender)
+  @Column({ type: 'enum', enum: Gender })
+  @IsEnum(Gender)
+  gender: Gender;
 
   @Field((type) => String)
   @Column({ select: false }) // 1. do not select pw(solve rehash problem)
@@ -42,6 +51,16 @@ export class User extends CoreEntity {
   @Field((type) => Boolean)
   @IsBoolean()
   verified: boolean;
+
+  @Field((type) => Date, { nullable: true })
+  @Column({ nullable: true })
+  @IsDate()
+  birth: Date;
+
+  @Field((type) => String, { nullable: true })
+  @Column({ nullable: true })
+  @IsString()
+  bio: string;
 
   @BeforeInsert() // Entity Listener
   @BeforeUpdate() // password need to hashed before save.
