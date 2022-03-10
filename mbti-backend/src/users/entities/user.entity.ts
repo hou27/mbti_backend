@@ -1,21 +1,15 @@
-import {
-  Field,
-  InputType,
-  ObjectType,
-  registerEnumType,
-} from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { CoreEntity } from 'src/common/entities/core.entity';
 import { Column, Entity, BeforeInsert, BeforeUpdate, OneToMany } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { InternalServerErrorException } from '@nestjs/common';
-import { IsBoolean, IsDate, IsEmail, IsEnum, IsString } from 'class-validator';
-
-export enum Gender {
-  Male = 'Male',
-  Female = 'Female',
-}
-
-registerEnumType(Gender, { name: 'Gender' }); // for graphql
+import {
+  IsBoolean,
+  IsDate,
+  IsEmail,
+  IsNumber,
+  IsString,
+} from 'class-validator';
 
 // Fix err : Schema must contain uniquely named types but contains multiple types named "User".
 @InputType('UserInputType', { isAbstract: true })
@@ -37,10 +31,10 @@ export class User extends CoreEntity {
   @IsEmail()
   email: string;
 
-  @Field((type) => Gender)
-  @Column({ type: 'enum', enum: Gender })
-  @IsEnum(Gender)
-  gender: Gender;
+  @Field((type) => Number)
+  @Column()
+  @IsNumber()
+  gender: Number;
 
   @Field((type) => String)
   @Column({ select: false }) // 1. do not select pw(solve rehash problem)
