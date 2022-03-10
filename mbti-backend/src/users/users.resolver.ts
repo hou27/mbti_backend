@@ -6,6 +6,7 @@ import { CoreOutput } from 'src/common/dtos/output.dto';
 import {
   CreateAccountInput,
   CreateAccountOutput,
+  CreateKakaoAccountInput,
 } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { meOutput } from './dtos/me.dto';
@@ -30,6 +31,12 @@ export class UserResolver {
     return this.usersService.createAccount(createAccountInput);
   }
 
+  @Mutation((returns) => CreateAccountOutput)
+  async createKakaoAccount(
+    @Args('input') createKakaoAccount: CreateKakaoAccountInput,
+  ): Promise<CreateAccountOutput> {
+    return this.usersService.createKakaoAccount(createKakaoAccount);
+  }
   // @Query((returns) => CoreOutput)
   // rootQuery(): CoreOutput {
   //   return { ok: true };

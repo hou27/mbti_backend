@@ -6,6 +6,7 @@ import { JwtService } from 'src/jwt/jwt.service';
 import {
   CreateAccountInput,
   CreateAccountOutput,
+  CreateKakaoAccountInput,
 } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { UserProfileOutput } from './dtos/user-profile.dto';
@@ -31,6 +32,47 @@ export class UserService {
       }
       const user = await this.users.save(
         this.users.create({ name, email, gender, password }),
+      );
+
+      // const verification = await this.verifications.save(
+      //   this.verifications.create({ user }),
+      // );
+
+      // this.mailService.sendVerificationEmail(user.email, verification.code);
+
+      return { ok: true };
+    } catch (e) {
+      console.log(e);
+      return { ok: false, error: "Couldn't create account" };
+    }
+  }
+
+  async createKakaoAccount({
+    name,
+    profileImg,
+    email,
+    gender,
+    password,
+    birth,
+  }: CreateKakaoAccountInput): Promise<CreateAccountOutput> {
+    try {
+      if (!name || !email || gender === undefined || !password) {
+        return { ok: false, error: "Couldn't create account with less args" };
+      }
+      const exists = await this.users.findOne({ email });
+      if (exists) {
+        return { ok: false, error: 'There is a user with that email already' };
+      }
+      const user = await this.users.save(
+        this.users.create({
+          name,
+          profileImg,
+          email,
+          gender,
+          password,
+          birth,
+          verified: true,
+        }),
       );
 
       // const verification = await this.verifications.save(

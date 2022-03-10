@@ -46,10 +46,10 @@ export class User extends CoreEntity {
   @IsBoolean()
   verified: boolean;
 
-  @Field((type) => Date, { nullable: true })
+  @Field((type) => String, { nullable: true })
   @Column({ nullable: true })
-  @IsDate()
-  birth: Date;
+  @IsString()
+  birth: String;
 
   @Field((type) => String, { nullable: true })
   @Column({ nullable: true })
