@@ -10,6 +10,8 @@ import {
 } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { UserProfileOutput } from './dtos/user-profile.dto';
+import { CoreOutput } from 'src/common/dtos/output.dto';
+import { FindByEmailInput } from './dtos/me.dto';
 
 @Injectable()
 export class UserService {
@@ -145,6 +147,22 @@ export class UserService {
       return { ok: false, error: 'User Not Found' };
     }
   }
+
+  async findByEmail({ email }: FindByEmailInput): Promise<UserProfileOutput> {
+    try {
+      const user = await this.users.findOne({ email });
+      if (!user) {
+        return { ok: false, error: 'There is no user with that email' };
+      }
+      return {
+        ok: true,
+        user: user,
+      };
+    } catch (error) {
+      return { ok: false, error: 'User Not Found' };
+    }
+  }
+
   // async editProfile(
   //   userId: number,
   //   { email, password }: EditProfileInput,

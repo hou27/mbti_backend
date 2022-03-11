@@ -9,7 +9,8 @@ import {
   CreateKakaoAccountInput,
 } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
-import { meOutput } from './dtos/me.dto';
+import { FindByEmailInput, meOutput } from './dtos/me.dto';
+import { UserProfileOutput } from './dtos/user-profile.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './users.service';
 
@@ -22,6 +23,13 @@ export class UserResolver {
   me(@AuthUser() authUser: User) {
     // decorator has to return value
     return authUser;
+  }
+
+  @Mutation((returns) => UserProfileOutput)
+  async findByEmail(
+    @Args('input') findByEmailInput: FindByEmailInput,
+  ): Promise<UserProfileOutput> {
+    return this.usersService.findByEmail(findByEmailInput);
   }
 
   @Mutation((returns) => CreateAccountOutput)
