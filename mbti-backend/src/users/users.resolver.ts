@@ -10,7 +10,7 @@ import {
 } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { FindByEmailInput, meOutput } from './dtos/me.dto';
-import { UserProfileOutput } from './dtos/user-profile.dto';
+import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './users.service';
 
@@ -55,13 +55,12 @@ export class UserResolver {
     return this.usersService.login(loginInput);
   }
 
-  // @Query((returns) => UserProfileOutput)
-  // @Role(['Any'])
-  // async userProfile(
-  //   @Args() userProfileInput: UserProfileInput,
-  // ): Promise<UserProfileOutput> {
-  //   return this.usersService.findById(userProfileInput.userId);
-  // }
+  @Query((returns) => UserProfileOutput)
+  async userProfile(
+    @Args() userProfileInput: UserProfileInput,
+  ): Promise<UserProfileOutput> {
+    return this.usersService.findById(userProfileInput.userId);
+  }
 
   // @Mutation((returns) => EditProfileOutput)
   // @Role(['Any'])
