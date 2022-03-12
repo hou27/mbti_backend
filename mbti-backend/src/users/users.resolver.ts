@@ -10,7 +10,12 @@ import {
 } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { FindByEmailInput, meOutput } from './dtos/me.dto';
-import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
+import {
+  SearchUserByNameInput,
+  SearchUserByNameOutput,
+  UserProfileInput,
+  UserProfileOutput,
+} from './dtos/user-profile.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './users.service';
 
@@ -25,7 +30,7 @@ export class UserResolver {
     return authUser;
   }
 
-  @Mutation((returns) => UserProfileOutput)
+  @Query((returns) => UserProfileOutput)
   async findByEmail(
     @Args('input') findByEmailInput: FindByEmailInput,
   ): Promise<UserProfileOutput> {
@@ -45,10 +50,6 @@ export class UserResolver {
   ): Promise<CreateAccountOutput> {
     return this.usersService.createKakaoAccount(createKakaoAccount);
   }
-  // @Query((returns) => CoreOutput)
-  // rootQuery(): CoreOutput {
-  //   return { ok: true };
-  // }
 
   @Mutation((returns) => LoginOutput)
   async login(@Args('input') loginInput: LoginInput): Promise<LoginOutput> {
@@ -77,4 +78,11 @@ export class UserResolver {
   // ): Promise<VerifyEmailOutput> {
   //   return this.usersService.verifyEmail(code);
   // }
+
+  @Query((returns) => SearchUserByNameOutput)
+  searchUser(
+    @Args('input') searchUserByNameInput: SearchUserByNameInput,
+  ): Promise<SearchUserByNameOutput> {
+    return this.usersService.searchUserByName(searchUserByNameInput);
+  }
 }

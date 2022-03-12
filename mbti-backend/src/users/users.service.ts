@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { JwtService } from 'src/jwt/jwt.service';
 import {
@@ -9,7 +9,11 @@ import {
   CreateKakaoAccountInput,
 } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
-import { UserProfileOutput } from './dtos/user-profile.dto';
+import {
+  SearchUserByNameInput,
+  SearchUserByNameOutput,
+  UserProfileOutput,
+} from './dtos/user-profile.dto';
 import { CoreOutput } from 'src/common/dtos/output.dto';
 import { FindByEmailInput } from './dtos/me.dto';
 
@@ -159,6 +163,24 @@ export class UserService {
       };
     } catch (error) {
       return { ok: false, error: 'User Not Found' };
+    }
+  }
+
+  async searchUserByName({
+    name,
+  }: SearchUserByNameInput): Promise<SearchUserByNameOutput> {
+    try {
+      const users = await this.users.find({
+        where: {
+          name: ILike(`%${name}%`), // Raw(name => `${name} ILIKE '%${query}%'`),
+        },
+      });
+      return {
+        ok: true,
+        users,
+      };
+    } catch {
+      return { ok: false, error: 'Could not search for users' };
     }
   }
 
