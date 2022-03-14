@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ARRAY_MAX_SIZE } from 'class-validator';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import {
@@ -23,8 +24,12 @@ export class TestService {
     results,
   }: AnalysisTestInput): Promise<AnalysisTestOutput> {
     try {
-      const user = await this.users.findOneOrFail(userId);
-      const tester = await this.users.findOneOrFail(testerId);
+      const user = await this.users.findOne(userId, {
+        relations: ['myResult', 'userList'],
+      });
+      const tester = await this.users.findOne(testerId, {
+        relations: ['myResult', 'userList'],
+      });
       // const values = Object.values(results);
       const sum = results.split('');
 
@@ -35,16 +40,24 @@ export class TestService {
       +sum[2] < 5 ? mbtiArr.push('T') : mbtiArr.push('F');
       +sum[3] < 5 ? mbtiArr.push('J') : mbtiArr.push('P');
 
-      const mbti = mbtiArr.join('');
-
+      const mbti: string = mbtiArr.join('');
+      console.log(user);
       const newTest = this.tests.create({ mbti, user, tester });
-      this.tests.save(newTest);
 
+      // if (user.myResult) user.myResult.push(newTest);
+      // else user.myResult = [newTest];
+
+      // if (tester.userList) tester.userList.push(newTest);
+      // else tester.userList = [newTest];
+
+      console.log(user);
+      await this.tests.save(newTest);
       return {
         ok: true,
         testResult: newTest,
       };
     } catch (error) {
+      console.log(error);
       return { ok: false, error: 'Server Error' };
     }
   }

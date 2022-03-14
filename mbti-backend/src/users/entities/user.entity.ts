@@ -57,13 +57,15 @@ export class User extends CoreEntity {
   @IsString()
   bio: string;
 
-  @Field((type) => [Test])
+  // Other did to me
+  @Field((type) => [Test], { nullable: true })
   @OneToMany((type) => Test, (test) => test.user)
-  tests: Test[];
+  myResult?: Test[];
 
-  @Field((type) => [Test])
+  // Test that I did
+  @Field((type) => [Test], { nullable: true })
   @OneToMany((type) => Test, (test) => test.tester)
-  userList: Test[];
+  userList?: Test[];
 
   @BeforeInsert() // Entity Listener
   @BeforeUpdate() // password need to hashed before save.

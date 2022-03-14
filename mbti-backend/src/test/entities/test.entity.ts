@@ -15,8 +15,9 @@ export class Test extends CoreEntity {
   mbti: string;
 
   @Field((type) => User)
-  @ManyToOne((type) => User, (user) => user.tests, {
+  @ManyToOne((type) => User, (user) => user.myResult, {
     onDelete: 'CASCADE', // if the user is deleted, then also going to delete test result.
+    nullable: false,
   })
   user: User;
 
@@ -26,6 +27,7 @@ export class Test extends CoreEntity {
   @Field((type) => User)
   @ManyToOne((type) => User, (user) => user.userList, {
     onDelete: 'CASCADE',
+    nullable: true,
   })
   tester: User;
 

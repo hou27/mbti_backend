@@ -16,6 +16,7 @@ import {
 } from './dtos/user-profile.dto';
 import { CoreOutput } from 'src/common/dtos/output.dto';
 import { FindByEmailInput } from './dtos/me.dto';
+import { Test } from 'src/test/entities/test.entity';
 
 @Injectable()
 export class UserService {
@@ -23,6 +24,8 @@ export class UserService {
     @InjectRepository(User)
     private readonly users: Repository<User>,
     private readonly jwtService: JwtService,
+    @InjectRepository(Test)
+    private readonly tests: Repository<Test>,
   ) {}
 
   async createAccount({
@@ -140,11 +143,38 @@ export class UserService {
 
   async findById(id: number): Promise<UserProfileOutput> {
     try {
-      const user = await this.users.findOneOrFail({ id }); // findOneOrFail throw an Error.
+      const user = await this.users.findOneOrFail(
+        { id },
+        {
+          relations: ['myResult', 'userList'],
+        },
+      ); // findOneOrFail throw an Error.
+      console.log(user.myResult[1]);
+      const myResult: Test[] = [];
+      const userList: Test[] = [];
+
+      for (let i = 0; i < user.myResult.length; i++) {
+        myResult.push(
+          await this.tests.findOne(user.myResult[i].id, {
+            relations: ['tester'],
+          }),
+        );
+      }
+      for (let i = 0; i < user.userList.length; i++) {
+        userList.push(
+          await this.tests.findOne(user.userList[i].id, {
+            relations: ['user'],
+          }),
+        );
+      }
+
+      // user.myResult[0].user.name = 'asd';
 
       return {
         ok: true,
         user: user,
+        myResult,
+        userList,
       };
     } catch (error) {
       return { ok: false, error: 'User Not Found' };
