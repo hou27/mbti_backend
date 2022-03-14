@@ -14,6 +14,8 @@ import { ApolloDriver } from '@nestjs/apollo';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 import { JwtModule } from './jwt/jwt.module';
 import { User } from './users/entities/user.entity';
+import { TestModule } from './test/test.module';
+import { Test } from './test/entities/test.entity';
 
 @Module({
   imports: [
@@ -44,7 +46,7 @@ import { User } from './users/entities/user.entity';
       synchronize: process.env.NODE_ENV !== 'prod',
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
-      entities: [User],
+      entities: [User, Test],
     }),
     GraphQLModule.forRoot({
       driver: ApolloDriver,
@@ -55,6 +57,7 @@ import { User } from './users/entities/user.entity';
       privateKey: process.env.PRIVATE_KEY,
     }),
     UsersModule,
+    TestModule,
   ],
   controllers: [],
   providers: [],

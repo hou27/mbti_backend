@@ -10,6 +10,7 @@ import {
   IsNumber,
   IsString,
 } from 'class-validator';
+import { Test } from 'src/test/entities/test.entity';
 
 // Fix err : Schema must contain uniquely named types but contains multiple types named "User".
 @InputType('UserInputType', { isAbstract: true })
@@ -55,6 +56,14 @@ export class User extends CoreEntity {
   @Column({ nullable: true })
   @IsString()
   bio: string;
+
+  @Field((type) => [Test])
+  @OneToMany((type) => Test, (test) => test.user)
+  tests: Test[];
+
+  @Field((type) => [Test])
+  @OneToMany((type) => Test, (test) => test.tester)
+  userList: Test[];
 
   @BeforeInsert() // Entity Listener
   @BeforeUpdate() // password need to hashed before save.
