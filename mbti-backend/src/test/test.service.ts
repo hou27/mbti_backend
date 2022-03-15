@@ -24,6 +24,9 @@ export class TestService {
     results,
   }: AnalysisTestInput): Promise<AnalysisTestOutput> {
     try {
+      if (userId === testerId) {
+        return { ok: false, error: 'You can not test myself' };
+      }
       const user = await this.users.findOne(userId, {
         relations: ['myResult', 'userList'],
       });
