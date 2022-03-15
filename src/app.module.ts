@@ -47,6 +47,10 @@ import { Test } from './test/entities/test.entity';
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
       entities: [User, Test],
+      ssl: {
+        /* <----- Add SSL option */ require: true,
+        rejectUnauthorized: false,
+      },
     }),
     GraphQLModule.forRoot({
       driver: ApolloDriver,
