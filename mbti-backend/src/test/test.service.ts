@@ -30,7 +30,6 @@ export class TestService {
       const tester = await this.users.findOne(testerId, {
         relations: ['myResult', 'userList'],
       });
-      // const values = Object.values(results);
       const sum = results.split('');
 
       const mbtiArr = [];
@@ -44,13 +43,6 @@ export class TestService {
       console.log(user);
       const newTest = this.tests.create({ mbti, user, tester });
 
-      // if (user.myResult) user.myResult.push(newTest);
-      // else user.myResult = [newTest];
-
-      // if (tester.userList) tester.userList.push(newTest);
-      // else tester.userList = [newTest];
-
-      console.log(user);
       await this.tests.save(newTest);
       return {
         ok: true,
