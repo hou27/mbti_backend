@@ -35,7 +35,12 @@ export class UserService {
     password,
   }: CreateAccountInput): Promise<CreateAccountOutput> {
     try {
-      const exists = await this.users.findOne({ email });
+      const exists = await this.users.findOne(
+        { email },
+        {
+          relations: ['myResult', 'userList'],
+        },
+      );
       if (exists) {
         return { ok: false, error: 'There is a user with that email already' };
       }
@@ -68,7 +73,12 @@ export class UserService {
       if (!name || !email || gender === undefined || !password) {
         return { ok: false, error: "Couldn't create account with less args" };
       }
-      const exists = await this.users.findOne({ email });
+      const exists = await this.users.findOne(
+        { email },
+        {
+          relations: ['myResult', 'userList'],
+        },
+      );
       if (exists) {
         return { ok: false, error: 'There is a user with that email already' };
       }
