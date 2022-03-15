@@ -47,12 +47,14 @@ import { Test } from './test/entities/test.entity';
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
       entities: [User, Test],
+      /* <----- Add SSL option */
       ssl: {
-        /* <----- Add SSL option */ require: true,
+        require: true,
         rejectUnauthorized: false,
       },
     }),
     GraphQLModule.forRoot({
+      playground: process.env.NODE_ENV !== 'prod',
       driver: ApolloDriver,
       autoSchemaFile: true,
       context: async ({ req }) => ({ user: req['user'] }), // context is called each req.
