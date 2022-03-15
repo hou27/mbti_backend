@@ -41,7 +41,6 @@ export class UserService {
           relations: ['myResult', 'userList'],
         },
       );
-      console.log(exists);
       if (exists) {
         return { ok: false, error: 'There is a user with that email already' };
       }
