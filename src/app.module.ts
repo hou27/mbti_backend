@@ -22,9 +22,9 @@ import { Test } from './test/entities/test.entity';
     ConfigModule.forRoot({
       isGlobal: true, // application 어디서나 config module에 접근 가능하도록.
       envFilePath: process.env.NODE_ENV === 'dev' ? '.env.dev' : '.env.test',
-      ignoreEnvFile: process.env.NODE_ENV === 'prod', // deploy할 때 env파일을 사용하지 않는 옵션
+      ignoreEnvFile: process.env.NODE_ENV === 'production', // deploy할 때 env파일을 사용하지 않는 옵션
       validationSchema: Joi.object({
-        NODE_ENV: Joi.string().valid('dev', 'prod', 'test').required(),
+        NODE_ENV: Joi.string().valid('dev', 'production', 'test').required(),
         DB_HOST: Joi.string(),
         DB_PORT: Joi.string(),
         DB_USERNAME: Joi.string(),
@@ -58,7 +58,7 @@ import { Test } from './test/entities/test.entity';
       },
     }),
     GraphQLModule.forRoot({
-      // playground: process.env.NODE_ENV !== 'prod',
+      // playground: process.env.NODE_ENV !== 'production',
       driver: ApolloDriver,
       autoSchemaFile: true,
       context: async ({ req }) => ({ user: req['user'] }), // context is called each req.
