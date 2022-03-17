@@ -58,7 +58,7 @@ import { Test } from './test/entities/test.entity';
       },
     }),
     GraphQLModule.forRoot({
-      playground: process.env.NODE_ENV !== 'prod',
+      // playground: process.env.NODE_ENV !== 'prod',
       driver: ApolloDriver,
       autoSchemaFile: true,
       context: async ({ req }) => ({ user: req['user'] }), // context is called each req.
