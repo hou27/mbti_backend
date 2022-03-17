@@ -30,3 +30,4 @@ npm install --save @nestjs/typeorm typeorm pg
 ## Contact us
 
 Email : ataj125@gmail.com
+Blog : https://hou27.tistory.com/
