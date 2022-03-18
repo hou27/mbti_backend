@@ -8,6 +8,7 @@ import {
   CreateAccountOutput,
   CreateKakaoAccountInput,
 } from './dtos/create-account.dto';
+import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { FindByEmailInput, meOutput } from './dtos/me.dto';
 import {
@@ -63,14 +64,14 @@ export class UserResolver {
     return this.usersService.findById(userProfileInput.userId);
   }
 
-  // @Mutation((returns) => EditProfileOutput)
-  // @Role(['Any'])
-  // async editProfile(
-  //   @AuthUser() authUser: User,
-  //   @Args('input') editProfileInput: EditProfileInput,
-  // ): Promise<EditProfileOutput> {
-  //   return this.usersService.editProfile(authUser.id, editProfileInput);
-  // }
+  @Mutation((returns) => EditProfileOutput)
+  @UseGuards(AuthGuard)
+  async editProfile(
+    @AuthUser() authUser: User,
+    @Args('input') editProfileInput: EditProfileInput,
+  ): Promise<EditProfileOutput> {
+    return this.usersService.editProfile(authUser.id, editProfileInput);
+  }
 
   // @Mutation((returns) => VerifyEmailOutput)
   // verifyEmail(

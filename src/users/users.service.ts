@@ -17,6 +17,7 @@ import {
 import { CoreOutput } from 'src/common/dtos/output.dto';
 import { FindByEmailInput } from './dtos/me.dto';
 import { Test } from 'src/test/entities/test.entity';
+import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 
 @Injectable()
 export class UserService {
@@ -225,38 +226,42 @@ export class UserService {
     }
   }
 
-  // async editProfile(
-  //   userId: number,
-  //   { email, password }: EditProfileInput,
-  // ): Promise<EditProfileOutput> {
-  //   // return this.users.update(userId, { ...editProfileInput });
-  //   // TypeORM - update : Doesn't check if entity exist in the db.
-  //   // --------- just send a query to db. (update entity X)
-  //   // -> can't call BeforeUpdate Hook.
+  async editProfile(
+    userId: number,
+    { email, password, oldPassword, birth, bio, name }: EditProfileInput,
+  ): Promise<EditProfileOutput> {
+    // return this.users.update(userId, { ...editProfileInput });
+    // TypeORM - update : Doesn't check if entity exist in the db.
+    // --------- just send a query to db. (update entity X)
+    // -> can't call BeforeUpdate Hook.
 
-  //   // resolve -> use save().
-  //   try {
-  //     const user = await this.users.findOne(userId);
-  //     if (email) {
-  //       user.email = email;
-  //       user.verified = false;
-  //       await this.verifications.delete({ user: { id: user.id } }); // one user can have only one verification.
-  //       const verification = await this.verifications.save(
-  //         this.verifications.create({ user }),
-  //       );
-  //       this.mailService.sendVerificationEmail(user.email, verification.code);
-  //     }
-  //     if (password) {
-  //       user.password = password;
-  //     }
-  //     await this.users.save(user);
-  //     return {
-  //       ok: true,
-  //     };
-  //   } catch (error) {
-  //     return { ok: false, error: 'Could not update profile.' };
-  //   }
-  // }
+    // resolve -> use save().
+    try {
+      const user = await this.users.findOne(userId);
+      if (email) {
+        user.email = email;
+      }
+      if (name) {
+        user.name = name;
+      }
+      if (password && oldPassword) {
+        if (oldPassword === user.password) user.password = password;
+        else return { ok: false, error: 'The password is incorrect' };
+      }
+      if (birth) {
+        user.birth = birth;
+      }
+      if (bio) {
+        user.bio = bio;
+      }
+      await this.users.save(user);
+      return {
+        ok: true,
+      };
+    } catch (error) {
+      return { ok: false, error: 'Could not update profile.' };
+    }
+  }
 
   // async verifyEmail(code: string): Promise<VerifyEmailOutput> {
   //   try {
