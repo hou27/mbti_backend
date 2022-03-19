@@ -1,5 +1,6 @@
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { CoreOutput } from 'src/common/dtos/output.dto';
+import { User } from 'src/users/entities/user.entity';
 import { Any } from 'typeorm';
 import { Test } from '../entities/test.entity';
 
@@ -20,6 +21,15 @@ export class AnalysisTestInput {
 
 @ObjectType()
 export class AnalysisTestOutput extends CoreOutput {
-  @Field((type) => Test, { nullable: true })
-  testResult?: Test;
+  @Field((type) => String, { nullable: true })
+  mbti?: string;
+
+  @Field((type) => User, { nullable: true })
+  user?: User;
+
+  @Field((type) => User, { nullable: true })
+  tester?: User;
+
+  @Field((type) => String, { nullable: true })
+  nonMemberNickname?: string;
 }

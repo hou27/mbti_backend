@@ -35,6 +35,6 @@ export class Test extends CoreEntity {
   testerId: number;
 
   @Field((type) => String, { nullable: true })
-  @Column()
+  @Column({ nullable: true })
   nonMemberNickname?: string;
 }

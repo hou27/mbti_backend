@@ -36,9 +36,6 @@ export class TestService {
         tester = await this.users.findOne(testerId, {
           relations: ['myResult', 'userList'],
         });
-        nonMemberNickname = '';
-      } else {
-        tester = user;
       }
       const sum = results.split('');
 
@@ -58,10 +55,22 @@ export class TestService {
         nonMemberNickname,
       });
 
+      const result = testerId
+        ? {
+            mbti,
+            user,
+            tester,
+          }
+        : {
+            mbti,
+            user,
+            nonMemberNickname,
+          };
+
       await this.tests.save(newTest);
       return {
         ok: true,
-        testResult: newTest,
+        ...result,
       };
     } catch (error) {
       console.log(error);
