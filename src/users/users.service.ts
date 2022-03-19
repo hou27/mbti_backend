@@ -180,8 +180,6 @@ export class UserService {
         );
       }
 
-      // user.myResult[0].user.name = 'asd';
-
       return {
         ok: true,
         user: user,

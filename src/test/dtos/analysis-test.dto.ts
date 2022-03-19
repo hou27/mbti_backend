@@ -9,7 +9,7 @@ export class AnalysisTestInput {
   userId: number;
 
   @Field((type) => Int, { nullable: true })
-  testerId: number;
+  testerId?: number;
 
   @Field((type) => String)
   results: string;
