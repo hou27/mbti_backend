@@ -29,8 +29,12 @@ export class Test extends CoreEntity {
     onDelete: 'CASCADE',
     nullable: true,
   })
-  tester: User;
+  tester?: User;
 
   @RelationId((test: Test) => test.tester)
   testerId: number;
+
+  @Field((type) => String, { nullable: true })
+  @Column()
+  nonMemberNickname?: string;
 }

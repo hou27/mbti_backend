@@ -13,6 +13,9 @@ export class AnalysisTestInput {
 
   @Field((type) => String)
   results: string;
+
+  @Field((type) => String, { nullable: true })
+  nonMemberNickname?: string;
 }
 
 @ObjectType()

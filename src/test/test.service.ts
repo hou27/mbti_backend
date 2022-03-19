@@ -22,17 +22,24 @@ export class TestService {
     userId,
     testerId,
     results,
+    nonMemberNickname,
   }: AnalysisTestInput): Promise<AnalysisTestOutput> {
     try {
+      let tester: User;
       if (userId === testerId) {
         return { ok: false, error: 'You can not test yourself' };
       }
       const user = await this.users.findOne(userId, {
         relations: ['myResult', 'userList'],
       });
-      const tester = await this.users.findOne(testerId, {
-        relations: ['myResult', 'userList'],
-      });
+      if (testerId) {
+        tester = await this.users.findOne(testerId, {
+          relations: ['myResult', 'userList'],
+        });
+        nonMemberNickname = '';
+      } else {
+        tester = user;
+      }
       const sum = results.split('');
 
       const mbtiArr = [];
@@ -44,7 +51,12 @@ export class TestService {
 
       const mbti: string = mbtiArr.join('');
       console.log(user);
-      const newTest = this.tests.create({ mbti, user, tester });
+      const newTest = this.tests.create({
+        mbti,
+        user,
+        tester,
+        nonMemberNickname,
+      });
 
       await this.tests.save(newTest);
       return {
