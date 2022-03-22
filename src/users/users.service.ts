@@ -214,6 +214,7 @@ export class UserService {
         where: {
           name: ILike(`%${name}%`), // Raw(name => `${name} ILIKE '%${query}%'`),
         },
+        relations: ['myResult', 'userList'],
       });
       return {
         ok: true,
