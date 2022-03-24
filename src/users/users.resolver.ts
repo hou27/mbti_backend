@@ -2,20 +2,19 @@ import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { CoreOutput } from 'src/common/dtos/output.dto';
 import {
   CreateAccountInput,
   CreateAccountOutput,
-  CreateKakaoAccountInput,
 } from './dtos/create-account.dto';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
+import { codeInput } from './dtos/kakao.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
-import { FindByEmailInput, meOutput } from './dtos/me.dto';
 import {
   SearchUserByNameInput,
   SearchUserByNameOutput,
   UserProfileInput,
   UserProfileOutput,
+  FindByEmailInput,
 } from './dtos/user-profile.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './users.service';
@@ -45,11 +44,9 @@ export class UserResolver {
     return this.usersService.createAccount(createAccountInput);
   }
 
-  @Mutation((returns) => CreateAccountOutput)
-  async createKakaoAccount(
-    @Args('input') createKakaoAccount: CreateKakaoAccountInput,
-  ): Promise<CreateAccountOutput> {
-    return this.usersService.createKakaoAccount(createKakaoAccount);
+  @Mutation((returns) => LoginOutput)
+  async loginWithKakao(@Args('input') code: codeInput): Promise<LoginOutput> {
+    return this.usersService.loginWithKakao(code);
   }
 
   @Mutation((returns) => LoginOutput)

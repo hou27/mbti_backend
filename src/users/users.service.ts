@@ -6,18 +6,21 @@ import { JwtService } from 'src/jwt/jwt.service';
 import {
   CreateAccountInput,
   CreateAccountOutput,
-  CreateKakaoAccountInput,
 } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import {
   SearchUserByNameInput,
   SearchUserByNameOutput,
   UserProfileOutput,
+  FindByEmailInput,
 } from './dtos/user-profile.dto';
-import { CoreOutput } from 'src/common/dtos/output.dto';
-import { FindByEmailInput } from './dtos/me.dto';
 import { Test } from 'src/test/entities/test.entity';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
+import { codeInput } from './dtos/kakao.dto';
+import axios from 'axios';
+
+import * as qs from 'qs';
+import * as CryptoJS from 'crypto-js';
 
 @Injectable()
 export class UserService {
@@ -34,6 +37,8 @@ export class UserService {
     email,
     gender,
     password,
+    profileImg,
+    birth,
   }: CreateAccountInput): Promise<CreateAccountOutput> {
     try {
       const exists = await this.users.findOne(
@@ -46,7 +51,7 @@ export class UserService {
         return { ok: false, error: 'There is a user with that email already' };
       }
       const user = await this.users.save(
-        this.users.create({ name, email, gender, password }),
+        this.users.create({ name, email, gender, password, profileImg, birth }),
       );
 
       // const verification = await this.verifications.save(
@@ -62,38 +67,31 @@ export class UserService {
     }
   }
 
-  async createKakaoAccount({
-    name,
-    profileImg,
-    email,
-    gender,
-    password,
-    birth,
-  }: CreateKakaoAccountInput): Promise<CreateAccountOutput> {
+  async loginWithKakao({ code }: codeInput): Promise<LoginOutput> {
     try {
-      if (!name || !email || gender === undefined || !password) {
-        return { ok: false, error: "Couldn't create account with less args" };
-      }
-      const exists = await this.users.findOne(
-        { email },
-        {
-          relations: ['myResult', 'userList'],
-        },
-      );
-      if (exists) {
-        return { ok: false, error: 'There is a user with that email already' };
-      }
-      const user = await this.users.save(
-        this.users.create({
-          name,
-          profileImg,
-          email,
-          gender,
-          password,
-          birth,
-          verified: true,
-        }),
-      );
+      // if (!name || !email || gender === undefined || !password) {
+      //   return { ok: false, error: "Couldn't create account with less args" };
+      // }
+      // const exists = await this.users.findOne(
+      //   { email },
+      //   {
+      //     relations: ['myResult', 'userList'],
+      //   },
+      // );
+      // if (exists) {
+      //   return { ok: false, error: 'There is a user with that email already' };
+      // }
+      // const user = await this.users.save(
+      //   this.users.create({
+      //     name,
+      //     profileImg,
+      //     email,
+      //     gender,
+      //     password,
+      //     birth,
+      //     verified: true,
+      //   }),
+      // );
 
       // const verification = await this.verifications.save(
       //   this.verifications.create({ user }),
@@ -101,10 +99,65 @@ export class UserService {
 
       // this.mailService.sendVerificationEmail(user.email, verification.code);
 
-      return { ok: true };
+      // get access token
+      const formData = {
+        grant_type: 'authorization_code',
+        client_id: process.env.KAKAO_REST_API_KEY,
+        redirect_uri: process.env.REDIRECT_URI_LOGIN,
+        code,
+        client_secret: process.env.KAKAO_CLIENT_SECRET,
+      };
+      const {
+        data: { access_token },
+      } = await axios
+        .post(`https://kauth.kakao.com/oauth/token?${qs.stringify(formData)}`)
+        .then((res) => {
+          return res;
+        });
+
+      // get user info
+      const { data: userInfo } = await axios
+        .get('https://kapi.kakao.com/v2/user/me', {
+          headers: {
+            Authorization: 'Bearer ' + access_token,
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+          },
+        })
+        .then((res) => {
+          return res;
+        });
+      const name = userInfo.properties.nickname;
+      const profileImg = userInfo.properties.profile_image;
+      const email = userInfo.kakao_account.email;
+      const gender = userInfo.kakao_account.gender;
+      const birth = userInfo.kakao_account.birthday;
+
+      const password = CryptoJS.SHA256(email + birth).toString();
+      let intGender = gender === 'male' ? 0 : 1;
+
+      const { ok: user } = await this.findByEmail({ email });
+      console.log('ok res :: ', user);
+      if (user) {
+        return await this.login({ email, password });
+      } else {
+        const { ok } = await this.createAccount({
+          name,
+          email,
+          gender: +intGender,
+          password,
+          profileImg,
+          birth,
+        });
+        if (ok) {
+          console.log('login');
+          return await this.login({ email, password });
+        } else {
+          return { ok: false, error: "Couldn't create account in try" };
+        }
+      }
     } catch (e) {
       console.log(e);
-      return { ok: false, error: "Couldn't create account" };
+      return { ok: false, error: 'Please Refresh and Try One more time' };
     }
   }
 
@@ -187,7 +240,7 @@ export class UserService {
         userList,
       };
     } catch (error) {
-      return { ok: false, error: 'User Not Found' };
+      return { ok: false, error: 'User Not Found while find by id' };
     }
   }
 
@@ -202,7 +255,7 @@ export class UserService {
         user: user,
       };
     } catch (error) {
-      return { ok: false, error: 'User Not Found' };
+      return { ok: false, error: 'User Not Found while find by email' };
     }
   }
 

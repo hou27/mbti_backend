@@ -1,4 +1,10 @@
-import { ArgsType, Field, InputType, ObjectType } from '@nestjs/graphql';
+import {
+  ArgsType,
+  Field,
+  InputType,
+  ObjectType,
+  PickType,
+} from '@nestjs/graphql';
 import { CoreOutput } from 'src/common/dtos/output.dto';
 import { Test } from 'src/test/entities/test.entity';
 import { User } from '../entities/user.entity';
@@ -14,6 +20,9 @@ export class SearchUserByNameInput {
   @Field((type) => String)
   name: string;
 }
+
+@InputType()
+export class FindByEmailInput extends PickType(User, ['email']) {}
 
 @ObjectType()
 export class UserProfileOutput extends CoreOutput {

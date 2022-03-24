@@ -34,6 +34,9 @@ import { Test } from './test/entities/test.entity';
         MAILGUN_API_KEY: Joi.string().required(),
         MAILGUN_DOMAIN_NAME: Joi.string().required(),
         MAILGUN_FROM_EMAIL: Joi.string().required(),
+        KAKAO_REST_API_KEY: Joi.string(),
+        REDIRECT_URI_LOGIN: Joi.string(),
+        KAKAO_CLIENT_SECRET: Joi.string(),
       }),
     }),
     TypeOrmModule.forRoot({
