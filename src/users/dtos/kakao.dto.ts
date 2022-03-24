@@ -9,7 +9,7 @@ import { User } from '../entities/user.entity';
 import { CoreOutput } from 'src/common/dtos/output.dto';
 
 @InputType()
-export class codeInput {
+export class LoginWithKakaoInput {
   @Field((type) => String)
   code: string;
 }

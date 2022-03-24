@@ -7,7 +7,7 @@ import {
   CreateAccountOutput,
 } from './dtos/create-account.dto';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
-import { codeInput } from './dtos/kakao.dto';
+import { LoginWithKakaoInput } from './dtos/kakao.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import {
   SearchUserByNameInput,
@@ -45,8 +45,10 @@ export class UserResolver {
   }
 
   @Mutation((returns) => LoginOutput)
-  async loginWithKakao(@Args('input') code: codeInput): Promise<LoginOutput> {
-    return this.usersService.loginWithKakao(code);
+  async loginWithKakao(
+    @Args('input') loginWithKakaoInput: LoginWithKakaoInput,
+  ): Promise<LoginOutput> {
+    return this.usersService.loginWithKakao(loginWithKakaoInput);
   }
 
   @Mutation((returns) => LoginOutput)

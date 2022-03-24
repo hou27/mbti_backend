@@ -16,7 +16,7 @@ import {
 } from './dtos/user-profile.dto';
 import { Test } from 'src/test/entities/test.entity';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
-import { codeInput } from './dtos/kakao.dto';
+import { LoginWithKakaoInput } from './dtos/kakao.dto';
 import axios from 'axios';
 
 import * as qs from 'qs';
@@ -67,7 +67,7 @@ export class UserService {
     }
   }
 
-  async loginWithKakao({ code }: codeInput): Promise<LoginOutput> {
+  async loginWithKakao({ code }: LoginWithKakaoInput): Promise<LoginOutput> {
     try {
       // get access token
       const formData = {
