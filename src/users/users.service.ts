@@ -69,36 +69,6 @@ export class UserService {
 
   async loginWithKakao({ code }: codeInput): Promise<LoginOutput> {
     try {
-      // if (!name || !email || gender === undefined || !password) {
-      //   return { ok: false, error: "Couldn't create account with less args" };
-      // }
-      // const exists = await this.users.findOne(
-      //   { email },
-      //   {
-      //     relations: ['myResult', 'userList'],
-      //   },
-      // );
-      // if (exists) {
-      //   return { ok: false, error: 'There is a user with that email already' };
-      // }
-      // const user = await this.users.save(
-      //   this.users.create({
-      //     name,
-      //     profileImg,
-      //     email,
-      //     gender,
-      //     password,
-      //     birth,
-      //     verified: true,
-      //   }),
-      // );
-
-      // const verification = await this.verifications.save(
-      //   this.verifications.create({ user }),
-      // );
-
-      // this.mailService.sendVerificationEmail(user.email, verification.code);
-
       // get access token
       const formData = {
         grant_type: 'authorization_code',
@@ -126,6 +96,7 @@ export class UserService {
         .then((res) => {
           return res;
         });
+
       const name = userInfo.properties.nickname;
       const profileImg = userInfo.properties.profile_image;
       const email = userInfo.kakao_account.email;
@@ -135,8 +106,10 @@ export class UserService {
       const password = CryptoJS.SHA256(email + birth).toString();
       let intGender = gender === 'male' ? 0 : 1;
 
+      // check user exist with email
       const { ok: user } = await this.findByEmail({ email });
-      console.log('ok res :: ', user);
+
+      // control user
       if (user) {
         return await this.login({ email, password });
       } else {
