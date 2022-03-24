@@ -110,9 +110,8 @@ export class UserService {
       const { ok: user } = await this.findByEmail({ email });
 
       // control user
-      if (user) {
-        return await this.login({ email, password });
-      } else {
+      let createAccountResult;
+      if (!user) {
         const { ok } = await this.createAccount({
           name,
           email,
@@ -121,12 +120,13 @@ export class UserService {
           profileImg,
           birth,
         });
-        if (ok) {
-          console.log('login');
-          return await this.login({ email, password });
-        } else {
-          return { ok: false, error: "Couldn't create account in try" };
-        }
+        createAccountResult = ok;
+      }
+
+      if (createAccountResult) {
+        return await this.login({ email, password });
+      } else {
+        return { ok: false, error: "Couldn't create account in try" };
       }
     } catch (e) {
       console.log(e);
