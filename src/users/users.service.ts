@@ -123,7 +123,7 @@ export class UserService {
         createAccountResult = ok;
       }
 
-      if (createAccountResult) {
+      if (user || createAccountResult) {
         return await this.login({ email, password });
       } else {
         return { ok: false, error: "Couldn't create account in try" };
