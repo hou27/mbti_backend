@@ -26,7 +26,7 @@ export class Test extends CoreEntity {
 
   @Field((type) => User)
   @ManyToOne((type) => User, (user) => user.userList, {
-    onDelete: 'CASCADE',
+    onDelete: 'SET NULL',
     nullable: true,
   })
   tester?: User;
