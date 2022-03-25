@@ -21,10 +21,7 @@ import axios from 'axios';
 
 import * as qs from 'qs';
 import * as CryptoJS from 'crypto-js';
-import {
-  DeleteAccountInput,
-  DeleteAccountOutput,
-} from './dtos/delete-account.dto';
+import { DeleteAccountOutput } from './dtos/delete-account.dto';
 import { UserRepository } from './repositories/user.repository';
 
 @Injectable()
@@ -71,9 +68,7 @@ export class UserService {
     }
   }
 
-  async deleteAccount({
-    userId,
-  }: DeleteAccountInput): Promise<DeleteAccountOutput> {
+  async deleteAccount(userId: number): Promise<DeleteAccountOutput> {
     try {
       const { affected } = await this.users.deleteAccountById(userId);
 

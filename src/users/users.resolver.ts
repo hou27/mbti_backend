@@ -6,10 +6,7 @@ import {
   CreateAccountInput,
   CreateAccountOutput,
 } from './dtos/create-account.dto';
-import {
-  DeleteAccountInput,
-  DeleteAccountOutput,
-} from './dtos/delete-account.dto';
+import { DeleteAccountOutput } from './dtos/delete-account.dto';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 import { LoginWithKakaoInput } from './dtos/kakao.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
@@ -50,9 +47,9 @@ export class UserResolver {
 
   @Mutation((returns) => CreateAccountOutput)
   async deleteAccount(
-    @Args() deleteAccountInput: DeleteAccountInput,
+    @AuthUser() authUser: User,
   ): Promise<DeleteAccountOutput> {
-    return this.usersService.deleteAccount(deleteAccountInput);
+    return this.usersService.deleteAccount(authUser.id);
   }
 
   @Mutation((returns) => LoginOutput)
