@@ -10,7 +10,7 @@ import { Test } from 'src/test/entities/test.entity';
 import { User } from '../entities/user.entity';
 
 @ArgsType()
-export class UserProfileInput {
+export class FindByIdInput {
   @Field((type) => Number)
   userId: number;
 }

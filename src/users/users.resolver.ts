@@ -6,15 +6,19 @@ import {
   CreateAccountInput,
   CreateAccountOutput,
 } from './dtos/create-account.dto';
+import {
+  DeleteAccountInput,
+  DeleteAccountOutput,
+} from './dtos/delete-account.dto';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 import { LoginWithKakaoInput } from './dtos/kakao.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import {
   SearchUserByNameInput,
   SearchUserByNameOutput,
-  UserProfileInput,
   UserProfileOutput,
   FindByEmailInput,
+  FindByIdInput,
 } from './dtos/user-profile.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './users.service';
@@ -44,6 +48,13 @@ export class UserResolver {
     return this.usersService.createAccount(createAccountInput);
   }
 
+  @Mutation((returns) => CreateAccountOutput)
+  async deleteAccount(
+    @Args() deleteAccountInput: DeleteAccountInput,
+  ): Promise<DeleteAccountOutput> {
+    return this.usersService.deleteAccount(deleteAccountInput);
+  }
+
   @Mutation((returns) => LoginOutput)
   async loginWithKakao(
     @Args('input') loginWithKakaoInput: LoginWithKakaoInput,
@@ -58,9 +69,9 @@ export class UserResolver {
 
   @Query((returns) => UserProfileOutput)
   async userProfile(
-    @Args() userProfileInput: UserProfileInput,
+    @Args() findByIdInput: FindByIdInput,
   ): Promise<UserProfileOutput> {
-    return this.usersService.findById(userProfileInput.userId);
+    return this.usersService.findById(findByIdInput.userId);
   }
 
   @Mutation((returns) => EditProfileOutput)

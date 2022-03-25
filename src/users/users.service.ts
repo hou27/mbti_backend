@@ -21,12 +21,16 @@ import axios from 'axios';
 
 import * as qs from 'qs';
 import * as CryptoJS from 'crypto-js';
+import {
+  DeleteAccountInput,
+  DeleteAccountOutput,
+} from './dtos/delete-account.dto';
+import { UserRepository } from './repositories/user.repository';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User)
-    private readonly users: Repository<User>,
+    private readonly users: /*Repository<User>*/ UserRepository,
     private readonly jwtService: JwtService,
     @InjectRepository(Test)
     private readonly tests: Repository<Test>,
@@ -64,6 +68,22 @@ export class UserService {
     } catch (e) {
       console.log(e);
       return { ok: false, error: "Couldn't create account" };
+    }
+  }
+
+  async deleteAccount({
+    userId,
+  }: DeleteAccountInput): Promise<DeleteAccountOutput> {
+    try {
+      const { affected } = await this.users.deleteAccountById(userId);
+
+      if (affected === 1) {
+        return { ok: true };
+      }
+      return { ok: false, error: 'Failed on delete account' };
+    } catch (e) {
+      console.log(e);
+      return { ok: false, error: "Couldn't delete account" };
     }
   }
 
