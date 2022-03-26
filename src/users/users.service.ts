@@ -84,12 +84,20 @@ export class UserService {
 
   async loginWithKakao({ code }: LoginWithKakaoInput): Promise<LoginOutput> {
     try {
-      const { accessToken, error } = await this.users.getAccessToken(code);
-      if (error) {
-        console.log(error);
+      const { accessToken, error: accessTokenError } =
+        await this.users.getAccessToken(code);
+      if (accessTokenError) {
+        console.log(accessTokenError);
         return { ok: false, error: 'Please go back and Try again' };
       }
-      const userInfo = await this.users.getUserInfo(accessToken);
+
+      const { userInfo, error: userInfoError } = await this.users.getUserInfo(
+        accessToken,
+      );
+      if (userInfoError) {
+        console.log(userInfoError);
+        return { ok: false, error: 'Please go back and Try again' };
+      }
 
       const name = userInfo.properties.nickname;
       const profileImg = userInfo.properties.profile_image;

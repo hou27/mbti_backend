@@ -8,7 +8,7 @@ import { User } from '../entities/user.entity';
 
 import * as qs from 'qs';
 import axios from 'axios';
-import { GetAccessTokenOutput } from '../dtos/kakao.dto';
+import { GetAccessTokenOutput, GetUserInfoOutput } from '../dtos/kakao.dto';
 
 /**
  * This Repository is Custom repository extends standard Repository
@@ -55,18 +55,22 @@ export class UserRepository extends Repository<User> {
   }
 
   // Get User Info from Kakao Auth Server
-  async getUserInfo(accessToken: String): Promise<any> {
-    const { data: userInfo } = await axios
-      .get('https://kapi.kakao.com/v2/user/me', {
-        headers: {
-          Authorization: 'Bearer ' + accessToken,
-          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-        },
-      })
-      .then((res) => {
-        return res;
-      });
+  async getUserInfo(accessToken: String): Promise<GetUserInfoOutput> {
+    try {
+      const { data: userInfo } = await axios
+        .get('https://kapi.kakao.com/v2/user/me', {
+          headers: {
+            Authorization: 'Bearer ' + accessToken,
+            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+          },
+        })
+        .then((res) => {
+          return res;
+        });
 
-    return userInfo;
+      return { ok: true, userInfo };
+    } catch (e) {
+      return { ok: false, error: e };
+    }
   }
 }
