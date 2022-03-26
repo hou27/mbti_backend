@@ -84,33 +84,12 @@ export class UserService {
 
   async loginWithKakao({ code }: LoginWithKakaoInput): Promise<LoginOutput> {
     try {
-      // get access token
-      const formData = {
-        grant_type: 'authorization_code',
-        client_id: process.env.KAKAO_REST_API_KEY,
-        redirect_uri: process.env.REDIRECT_URI_LOGIN,
-        code,
-        client_secret: process.env.KAKAO_CLIENT_SECRET,
-      };
-      const {
-        data: { access_token },
-      } = await axios
-        .post(`https://kauth.kakao.com/oauth/token?${qs.stringify(formData)}`)
-        .then((res) => {
-          return res;
-        });
-
-      // get user info
-      const { data: userInfo } = await axios
-        .get('https://kapi.kakao.com/v2/user/me', {
-          headers: {
-            Authorization: 'Bearer ' + access_token,
-            'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-          },
-        })
-        .then((res) => {
-          return res;
-        });
+      const { accessToken, error } = await this.users.getAccessToken(code);
+      if (error) {
+        console.log(error);
+        return { ok: false, error: 'Please go back and Try again' };
+      }
+      const userInfo = await this.users.getUserInfo(accessToken);
 
       const name = userInfo.properties.nickname;
       const profileImg = userInfo.properties.profile_image;
@@ -118,7 +97,9 @@ export class UserService {
       const gender = userInfo.kakao_account.gender;
       const birth = userInfo.kakao_account.birthday;
 
-      const password = CryptoJS.SHA256(email + birth).toString();
+      const password = CryptoJS.SHA256(
+        email + birth + process.env.KAKAO_JS_KEY,
+      ).toString();
       let intGender = gender === 'male' ? 0 : 1;
 
       // check user exist with email
@@ -145,7 +126,7 @@ export class UserService {
       }
     } catch (e) {
       console.log(e);
-      return { ok: false, error: 'Please Refresh and Try One more time' };
+      return { ok: false, error: 'INTERNAL_SERVER_ERROR' };
     }
   }
 
@@ -160,20 +141,23 @@ export class UserService {
         // select 하기 전엔 전부 불러와지지만(select: false인 Column제외)
         // pw를 불러오기 위해 select해주면 select한 것만 불러와짐.
       );
-      console.log(user);
+
       if (!user) {
         return {
           ok: false,
           error: 'User not found',
         };
       }
+
       const passwordCorrect = await user.checkPassword(password);
+
       if (!passwordCorrect) {
         return {
           ok: false,
           error: 'Wrong password',
         };
       }
+
       const token = this.jwtService.sign(
         user.id,
         /*{ id: user.id }*/

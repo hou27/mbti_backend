@@ -16,3 +16,9 @@ export class LoginWithKakaoInput {
 
 @ObjectType()
 export class CreateAccountOutput extends CoreOutput {}
+
+@ObjectType()
+export class GetAccessTokenOutput extends CoreOutput {
+  @Field((type) => String, { nullable: true })
+  accessToken?: string;
+}
