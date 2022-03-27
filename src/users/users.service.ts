@@ -27,7 +27,7 @@ import { UserRepository } from './repositories/user.repository';
 @Injectable()
 export class UserService {
   constructor(
-    private readonly users: /*Repository<User>*/ UserRepository,
+    private readonly users: UserRepository,
     private readonly jwtService: JwtService,
     @InjectRepository(Test)
     private readonly tests: Repository<Test>,
