@@ -27,7 +27,7 @@ import { UserRepository } from './repositories/user.repository';
 @Injectable()
 export class UserService {
   constructor(
-    private readonly users: /*Repository<User>*/ UserRepository,
+    private readonly users: typeof UserRepository,
     private readonly jwtService: JwtService,
     @InjectRepository(Test)
     private readonly tests: Repository<Test>,
@@ -42,12 +42,13 @@ export class UserService {
     birth,
   }: CreateAccountInput): Promise<CreateAccountOutput> {
     try {
-      const exists = await this.users.findOne(
-        { email },
-        {
-          relations: ['myResult', 'userList'],
+      const exists = await this.users.findOne({
+        where: { email },
+        relations: {
+          myResult: true,
+          userList: true,
         },
-      );
+      });
       if (exists) {
         return { ok: false, error: 'There is a user with that email already' };
       }
@@ -142,8 +143,7 @@ export class UserService {
     // make a JWT and give it to the user
     try {
       const user = await this.users.findOne(
-        { email },
-        { select: ['id', 'password'] },
+        { where: { email }, select: { id: true, password: true } },
         // tell findOne that I want to select things(load from db)
 
         // select 하기 전엔 전부 불러와지지만(select: false인 Column제외)
@@ -188,27 +188,35 @@ export class UserService {
 
   async findById(id: number): Promise<UserProfileOutput> {
     try {
-      const user = await this.users.findOneOrFail(
-        { id },
-        {
-          relations: ['myResult', 'userList'],
+      const user = await this.users.findOneOrFail({
+        where: { id },
+
+        relations: {
+          myResult: true,
+          userList: true,
         },
-      ); // findOneOrFail throw an Error.
+      }); // findOneOrFail throw an Error.
       console.log(user.myResult[1]);
       const myResult: Test[] = [];
       const userList: Test[] = [];
 
       for (let i = 0; i < user.myResult.length; i++) {
         myResult.push(
-          await this.tests.findOne(user.myResult[i].id, {
-            relations: ['tester'],
+          await this.tests.findOne({
+            where: {
+              id: user.myResult[i].id,
+            },
+            relations: { tester: true },
           }),
         );
       }
       for (let i = 0; i < user.userList.length; i++) {
         userList.push(
-          await this.tests.findOne(user.userList[i].id, {
-            relations: ['user'],
+          await this.tests.findOne({
+            where: {
+              id: user.userList[i].id,
+            },
+            relations: { user: true },
           }),
         );
       }
@@ -226,7 +234,7 @@ export class UserService {
 
   async findByEmail({ email }: FindByEmailInput): Promise<UserProfileOutput> {
     try {
-      const user = await this.users.findOne({ email });
+      const user = await this.users.findOneBy({ email });
       if (!user) {
         return { ok: false, error: 'There is no user with that email' };
       }
@@ -269,7 +277,7 @@ export class UserService {
 
     // resolve -> use save().
     try {
-      const user = await this.users.findOne(userId);
+      const user = await this.users.findOneBy({ id: userId });
       if (email) {
         user.email = email;
       }

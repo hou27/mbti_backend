@@ -29,12 +29,24 @@ export class TestService {
       if (userId === testerId) {
         return { ok: false, error: 'You can not test yourself' };
       }
-      const user = await this.users.findOne(userId, {
-        relations: ['myResult', 'userList'],
+      const user = await this.users.findOne({
+        where: {
+          id: userId,
+        },
+        relations: {
+          myResult: true,
+          userList: true,
+        },
       });
       if (testerId) {
-        tester = await this.users.findOne(testerId, {
-          relations: ['myResult', 'userList'],
+        tester = await this.users.findOne({
+          where: {
+            id: testerId,
+          },
+          relations: {
+            myResult: true,
+            userList: true,
+          },
         });
       }
       const sum = results.split('');
