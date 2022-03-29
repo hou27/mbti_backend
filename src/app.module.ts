@@ -69,8 +69,9 @@ import { Test } from './test/entities/test.entity';
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,
     }),
-    UsersModule,
+
     TestModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],
