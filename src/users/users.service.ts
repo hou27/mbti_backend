@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
-import { User } from './entities/user.entity';
+// import { User } from './entities/user.entity';
 import { JwtService } from 'src/jwt/jwt.service';
 import {
   CreateAccountInput,
@@ -14,7 +14,7 @@ import {
   UserProfileOutput,
   FindByEmailInput,
 } from './dtos/user-profile.dto';
-import { Test } from 'src/test/entities/test.entity';
+import { Test } from 'src/tests/entities/test.entity';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 import { LoginWithKakaoInput } from './dtos/kakao.dto';
 import axios from 'axios';

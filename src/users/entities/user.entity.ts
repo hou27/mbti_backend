@@ -10,7 +10,7 @@ import {
   IsNumber,
   IsString,
 } from 'class-validator';
-import { Test } from 'src/test/entities/test.entity';
+import { Test } from 'src/tests/entities/test.entity';
 
 // Fix err : Schema must contain uniquely named types but contains multiple types named "User".
 @InputType('UserInputType', { isAbstract: true })

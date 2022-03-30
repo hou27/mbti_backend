@@ -6,7 +6,7 @@ import {
   PickType,
 } from '@nestjs/graphql';
 import { CoreOutput } from 'src/common/dtos/output.dto';
-import { Test } from 'src/test/entities/test.entity';
+import { Test } from 'src/tests/entities/test.entity';
 import { User } from '../entities/user.entity';
 
 @ArgsType()

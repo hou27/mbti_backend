@@ -14,8 +14,8 @@ import { ApolloDriver } from '@nestjs/apollo';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 import { JwtModule } from './jwt/jwt.module';
 import { User } from './users/entities/user.entity';
-import { TestModule } from './test/test.module';
-import { Test } from './test/entities/test.entity';
+import { TestsModule } from './tests/tests.module';
+import { Test } from './tests/entities/test.entity';
 
 @Module({
   imports: [
@@ -70,7 +70,7 @@ import { Test } from './test/entities/test.entity';
       privateKey: process.env.PRIVATE_KEY,
     }),
     UsersModule,
-    TestModule,
+    TestsModule,
   ],
   controllers: [],
   providers: [],

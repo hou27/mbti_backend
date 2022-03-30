@@ -5,7 +5,7 @@ import {
   AnalysisTestOutput,
 } from './dtos/analysis-test.dto';
 import { Test } from './entities/test.entity';
-import { TestService } from './test.service';
+import { TestService } from './tests.service';
 
 @Resolver((of) => Test)
 export class TestResolver {
