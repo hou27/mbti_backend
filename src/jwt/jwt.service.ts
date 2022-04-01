@@ -15,19 +15,13 @@ export class JwtService {
     private readonly userService: UserService,
   ) {}
 
-  signAccessToken(
-    userId: number,
-    /*payload: object*/
-  ): string {
+  signAccessToken(userId: number): string {
     return jwt.sign({ id: userId }, this.options.accessTokenPrivateKey, {
       expiresIn: '1s',
     });
   }
 
-  signRefreshToken(
-    userId: number,
-    /*payload: object*/
-  ): string {
+  signRefreshToken(userId: number): string {
     return jwt.sign({ id: userId }, this.options.refreshTokenPrivateKey, {
       expiresIn: '24h',
     });
