@@ -23,6 +23,7 @@ import * as qs from 'qs';
 import * as CryptoJS from 'crypto-js';
 import { DeleteAccountOutput } from './dtos/delete-account.dto';
 import { UserRepository } from './repositories/user.repository';
+import { RefreshToken } from './entities/refresh-token.entity';
 
 @Injectable()
 export class UserService {
@@ -31,6 +32,8 @@ export class UserService {
     private readonly jwtService: JwtService,
     @InjectRepository(Test)
     private readonly tests: Repository<Test>,
+    @InjectRepository(RefreshToken)
+    private readonly refreshTokens: Repository<RefreshToken>,
   ) {}
 
   async createAccount({
@@ -166,17 +169,18 @@ export class UserService {
         };
       }
 
-      const token = this.jwtService.sign(
+      const access_token = this.jwtService.signAccessToken(
         user.id,
         /*{ id: user.id }*/
       );
-      // const token = jwt.sign(
-      // 	{ id: user.id },
-      // 	this.config.get('SECRET_KEY') /* process.env.SECRET_KEY */
-      // );
+      const refresh_token = this.jwtService.signRefreshToken(user.id);
+
+      this.refreshTokens.save([{ userId: user.id, refresh_token }]);
+
       return {
         ok: true,
-        token,
+        access_token,
+        refresh_token,
       };
     } catch (error) {
       return {

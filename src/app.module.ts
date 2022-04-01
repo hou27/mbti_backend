@@ -16,6 +16,7 @@ import { JwtModule } from './jwt/jwt.module';
 import { User } from './users/entities/user.entity';
 import { TestsModule } from './tests/tests.module';
 import { Test } from './tests/entities/test.entity';
+import { RefreshToken } from './users/entities/refresh-token.entity';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { Test } from './tests/entities/test.entity';
         DB_USERNAME: Joi.string(),
         DB_PW: Joi.string(),
         DB_NAME: Joi.string(),
-        PRIVATE_KEY: Joi.string().required(),
+        ACCESS_TOKEN_PRIVATE_KEY: Joi.string().required(),
+        REFRESH_TOKEN_PRIVATE_KEY: Joi.string().required(),
         MAILGUN_API_KEY: Joi.string().required(),
         MAILGUN_DOMAIN_NAME: Joi.string().required(),
         MAILGUN_FROM_EMAIL: Joi.string().required(),
@@ -53,7 +55,7 @@ import { Test } from './tests/entities/test.entity';
       synchronize: /*process.env.NODE_ENV !== 'prod'*/ true,
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
-      entities: [User, Test],
+      entities: [User, Test, RefreshToken],
       /* <----- Add SSL option */
       ssl: {
         require: true,
@@ -67,7 +69,8 @@ import { Test } from './tests/entities/test.entity';
       context: async ({ req }) => ({ user: req['user'] }), // context is called each req.
     }),
     JwtModule.forRoot({
-      privateKey: process.env.PRIVATE_KEY,
+      accessTokenPrivateKey: process.env.ACCESS_TOKEN_PRIVATE_KEY,
+      refreshTokenPrivateKey: process.env.REFRESH_TOKEN_PRIVATE_KEY,
     }),
     UsersModule,
     TestsModule,
