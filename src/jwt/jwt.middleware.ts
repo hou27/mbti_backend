@@ -5,7 +5,6 @@ import {
   NestMiddleware,
 } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { HTTPError } from 'got/dist/source';
 import { UserService } from 'src/users/users.service';
 import { JwtService } from './jwt.service';
 

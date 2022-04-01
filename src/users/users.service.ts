@@ -24,6 +24,7 @@ import * as CryptoJS from 'crypto-js';
 import { DeleteAccountOutput } from './dtos/delete-account.dto';
 import { UserRepository } from './repositories/user.repository';
 import { RefreshToken } from './entities/refresh-token.entity';
+import { RefreshTokenInput } from './dtos/refresh-token.dto';
 
 @Injectable()
 export class UserService {
@@ -187,6 +188,33 @@ export class UserService {
         ok: false,
         error: "Can't log user in.",
       };
+    }
+  }
+
+  async regenerateAccessToken({
+    userId,
+    refresh_token,
+  }: RefreshTokenInput): Promise<LoginOutput> {
+    try {
+      const { refresh_token: refreshToken } = await this.refreshTokens.findOne({
+        userId,
+      });
+      if (refreshToken === refresh_token) {
+        const access_token = this.jwtService.signAccessToken(userId);
+        const refresh_token = this.jwtService.signRefreshToken(userId);
+
+        this.refreshTokens.save([{ userId, refresh_token }]);
+
+        return {
+          ok: true,
+          access_token,
+          refresh_token,
+        };
+      } else {
+        return { ok: false, error: 'INVALID REFRESH TOKEN' };
+      }
+    } catch (error) {
+      return { ok: false, error: 'There is no Refresh Token' };
     }
   }
 
