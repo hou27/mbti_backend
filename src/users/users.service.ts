@@ -24,7 +24,10 @@ import * as CryptoJS from 'crypto-js';
 import { DeleteAccountOutput } from './dtos/delete-account.dto';
 import { UserRepository } from './repositories/user.repository';
 import { RefreshToken } from './entities/refresh-token.entity';
-import { RefreshTokenInput } from './dtos/refresh-token.dto';
+import {
+  RefreshTokenInput,
+  RefreshTokenOutput,
+} from './dtos/refresh-token.dto';
 
 @Injectable()
 export class UserService {
@@ -77,6 +80,7 @@ export class UserService {
       const { affected } = await this.users.deleteAccountById(userId);
 
       if (affected === 1) {
+        // refresh token 도 삭제해야함.
         return { ok: true };
       }
       return { ok: false, error: 'Failed on delete account' };
@@ -188,33 +192,6 @@ export class UserService {
         ok: false,
         error: "Can't log user in.",
       };
-    }
-  }
-
-  async regenerateAccessToken({
-    userId,
-    refresh_token,
-  }: RefreshTokenInput): Promise<LoginOutput> {
-    try {
-      const { refresh_token: refreshToken } = await this.refreshTokens.findOne({
-        userId,
-      });
-      if (refreshToken === refresh_token) {
-        const access_token = this.jwtService.signAccessToken(userId);
-        const refresh_token = this.jwtService.signRefreshToken(userId);
-
-        this.refreshTokens.save([{ userId, refresh_token }]);
-
-        return {
-          ok: true,
-          access_token,
-          refresh_token,
-        };
-      } else {
-        return { ok: false, error: 'INVALID REFRESH TOKEN' };
-      }
-    } catch (error) {
-      return { ok: false, error: 'There is no Refresh Token' };
     }
   }
 
@@ -342,4 +319,38 @@ export class UserService {
   //     return { ok: false, error: 'Could not verify email.' };
   //   }
   // }
+}
+
+@Injectable()
+export class RefreshTokenService {
+  constructor(
+    @InjectRepository(RefreshToken)
+    private readonly refreshTokens: Repository<RefreshToken>,
+  ) {}
+
+  async getRefreshToken({
+    refresh_token,
+  }: RefreshTokenInput): Promise<RefreshTokenOutput> {
+    try {
+      const matched = await this.refreshTokens.findOne({
+        refresh_token,
+      });
+
+      if (matched) return { ok: true, refreshToken: matched.refresh_token };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async updateRefreshToken({
+    refresh_token,
+  }: RefreshTokenInput): Promise<Boolean> {
+    try {
+      await this.refreshTokens.save([{ refresh_token }]);
+
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
 }

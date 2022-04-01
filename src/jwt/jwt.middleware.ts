@@ -21,17 +21,33 @@ export class JwtMiddleware implements NestMiddleware {
         const decoded = this.jwtService.verifyAccessToken(token.toString());
         if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
           const { user, ok } = await this.userService.findById(decoded['id']);
-          ok ? (req['user'] = user) : null; // findById return 값 변화에 따른 수정
+          ok ? (req['user'] = user) : null;
         }
       } catch (e) {
-        // console.log(e);
-        throw new HttpException(
-          {
-            ok: false,
-            error: 'INVALID TOKEN',
-          },
-          HttpStatus.UNAUTHORIZED,
-        );
+        const refreshToken = req.headers['refresh-jwt'];
+        const { ok, access_token, refresh_token } =
+          await this.jwtService.regenerateAccessToken({
+            refresh_token: refreshToken.toString(),
+          });
+
+        if (ok === false) {
+          throw new HttpException(
+            {
+              ok: false,
+              error: 'FAILED TO UPDATE TOKEN',
+            },
+            HttpStatus.UNAUTHORIZED,
+          );
+        } else {
+          res.cookie('refresh-jwt', refresh_token, {
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000, //1 day
+          });
+          res.cookie('access-jwt', access_token, {
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000, //1 day
+          });
+        }
       }
     }
     next();

@@ -11,9 +11,4 @@ export class RefreshToken extends CoreEntity {
   @Column()
   @IsString()
   refresh_token: string;
-
-  @Field((type) => Int)
-  @Column()
-  @IsNumber()
-  userId: number;
 }
