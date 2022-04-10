@@ -23,16 +23,7 @@ export class JwtMiddleware implements NestMiddleware {
           const { user, ok } = await this.userService.findById(decoded['id']);
           ok ? (req['user'] = user) : null; // findById return 값 변화에 따른 수정
         }
-      } catch (e) {
-        // console.log(e);
-        throw new HttpException(
-          {
-            ok: false,
-            error: 'INVALID TOKEN',
-          },
-          HttpStatus.UNAUTHORIZED,
-        );
-      }
+      } catch (error) {}
     }
     next();
   }

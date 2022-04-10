@@ -192,26 +192,30 @@ export class UserService {
   }
 
   async regenerateAccessToken({
-    userId,
     refresh_token,
   }: RefreshTokenInput): Promise<LoginOutput> {
     try {
-      const { refresh_token: refreshToken } = await this.refreshTokens.findOne({
-        userId,
-      });
-      if (refreshToken === refresh_token) {
-        const access_token = this.jwtService.signAccessToken(userId);
-        const refresh_token = this.jwtService.signRefreshToken(userId);
+      const decoded = this.jwtService.verifyRefreshToken(refresh_token);
+      if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
+        const { userId, refresh_token: refreshToken } =
+          await this.refreshTokens.findOne({
+            userId: decoded['id'],
+          });
 
-        this.refreshTokens.save([{ userId, refresh_token }]);
+        if (refreshToken === refresh_token) {
+          const access_token = this.jwtService.signAccessToken(userId);
+          const refresh_token = this.jwtService.signRefreshToken(userId);
 
-        return {
-          ok: true,
-          access_token,
-          refresh_token,
-        };
-      } else {
-        return { ok: false, error: 'INVALID REFRESH TOKEN' };
+          this.refreshTokens.save([{ userId, refresh_token }]);
+
+          return {
+            ok: true,
+            access_token,
+            refresh_token,
+          };
+        } else {
+          return { ok: false, error: 'INVALID REFRESH TOKEN' };
+        }
       }
     } catch (error) {
       return { ok: false, error: 'There is no Refresh Token' };

@@ -1,4 +1,10 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { Reflector } from '@nestjs/core';
 import { User } from 'src/users/entities/user.entity';
@@ -18,7 +24,14 @@ export class AuthGuard implements CanActivate {
     const gqlContext = GqlExecutionContext.create(context).getContext(); // graphql context는 http의 context와 다르기 때문에 변환이 필요함.
     const user: User = gqlContext['user'];
     if (!user) {
-      return false; // block req
+      // return false; // block req
+      throw new HttpException(
+        {
+          ok: false,
+          error: 'No User in req',
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
     }
     return true; // continue req
   }

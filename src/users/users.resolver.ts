@@ -11,6 +11,10 @@ import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 import { LoginWithKakaoInput } from './dtos/kakao.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import {
+  RefreshTokenInput,
+  RefreshTokenOutput,
+} from './dtos/refresh-token.dto';
+import {
   SearchUserByNameInput,
   SearchUserByNameOutput,
   UserProfileOutput,
@@ -62,6 +66,13 @@ export class UserResolver {
   @Mutation((returns) => LoginOutput)
   async login(@Args('input') loginInput: LoginInput): Promise<LoginOutput> {
     return this.usersService.login(loginInput);
+  }
+
+  @Mutation((returns) => RefreshTokenOutput)
+  async refreshToken(
+    @Args('input') refreshTokenInput: RefreshTokenInput,
+  ): Promise<RefreshTokenOutput> {
+    return this.usersService.regenerateAccessToken(refreshTokenInput);
   }
 
   @Query((returns) => UserProfileOutput)

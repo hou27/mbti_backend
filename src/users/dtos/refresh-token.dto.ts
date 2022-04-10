@@ -1,15 +1,12 @@
-import { InputType, PickType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType, PickType } from '@nestjs/graphql';
 import { RefreshToken } from '../entities/refresh-token.entity';
+import { User } from '../entities/user.entity';
+import { LoginOutput } from './login.dto';
 
 @InputType()
 export class RefreshTokenInput extends PickType(RefreshToken, [
-  'userId',
   'refresh_token',
 ]) {}
 
-/**
- * Combine PickType and PartialType
- *
- * 1. PickType - make class with email and pw in User
- * 2. PartialType - make them optional
- */
+@ObjectType()
+export class RefreshTokenOutput extends LoginOutput {}
