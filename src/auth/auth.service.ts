@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { JwtModuleOptions } from './jwt.interfaces';
+import { JwtModuleOptions } from './jwt/jwt.interfaces';
 import { CONFIG_OPTIONS } from 'src/common/common.constants';
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()
-export class JwtService {
+export class AuthService {
   constructor(
     @Inject(CONFIG_OPTIONS)
     private readonly options: JwtModuleOptions,
@@ -15,7 +15,7 @@ export class JwtService {
     /*payload: object*/
   ): string {
     return jwt.sign({ id: userId }, this.options.accessTokenPrivateKey, {
-      expiresIn: '1s',
+      expiresIn: '4m',
     });
   }
 

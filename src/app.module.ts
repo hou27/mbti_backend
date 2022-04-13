@@ -11,12 +11,11 @@ import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { UsersModule } from './users/users.module';
 import { ApolloDriver } from '@nestjs/apollo';
-import { JwtMiddleware } from './jwt/jwt.middleware';
-import { JwtModule } from './jwt/jwt.module';
 import { User } from './users/entities/user.entity';
 import { TestsModule } from './tests/tests.module';
 import { Test } from './tests/entities/test.entity';
 import { RefreshToken } from './users/entities/refresh-token.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -66,9 +65,12 @@ import { RefreshToken } from './users/entities/refresh-token.entity';
       playground: process.env.NODE_ENV !== 'prod',
       driver: ApolloDriver,
       autoSchemaFile: true,
-      context: async ({ req }) => ({ user: req['user'] }), // context is called each req.
+      context: async ({ req }) => {
+        console.log(req.user);
+        return { user: req['user'] };
+      }, // context is called each req.
     }),
-    JwtModule.forRoot({
+    AuthModule.forRoot({
       accessTokenPrivateKey: process.env.ACCESS_TOKEN_PRIVATE_KEY,
       refreshTokenPrivateKey: process.env.REFRESH_TOKEN_PRIVATE_KEY,
     }),
@@ -78,10 +80,10 @@ import { RefreshToken } from './users/entities/refresh-token.entity';
   controllers: [],
   providers: [],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(JwtMiddleware)
-      .forRoutes({ path: '/graphql', method: RequestMethod.POST });
-  }
-}
+export class AppModule {} //implements NestModule {
+//   configure(consumer: MiddlewareConsumer) {
+//     consumer
+//       .apply(JwtMiddleware)
+//       .forRoutes({ path: '/graphql', method: RequestMethod.POST });
+//   }
+// }

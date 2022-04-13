@@ -1,7 +1,8 @@
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 import { AuthUser } from 'src/auth/auth-user.decorator';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { GqlAuthGuard } from 'src/auth/auth.guard';
+import { JwtInterceptor } from 'src/auth/jwt/jwt.interceptor';
 import {
   CreateAccountInput,
   CreateAccountOutput,
@@ -29,8 +30,11 @@ export class UserResolver {
   constructor(private readonly usersService: UserService) {}
 
   @Query((returns) => User)
-  @UseGuards(AuthGuard)
+  @UseGuards(GqlAuthGuard)
+  @UseInterceptors(JwtInterceptor)
   me(@AuthUser() authUser: User) {
+    console.log('in me');
+    console.log(authUser);
     // decorator has to return value
     return authUser;
   }
@@ -83,7 +87,7 @@ export class UserResolver {
   }
 
   @Mutation((returns) => EditProfileOutput)
-  @UseGuards(AuthGuard)
+  @UseGuards(GqlAuthGuard)
   async editProfile(
     @AuthUser() authUser: User,
     @Args('input') editProfileInput: EditProfileInput,

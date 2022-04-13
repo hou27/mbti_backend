@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
 // import { User } from './entities/user.entity';
-import { JwtService } from 'src/jwt/jwt.service';
+import { AuthService } from 'src/auth/auth.service';
 import {
   CreateAccountInput,
   CreateAccountOutput,
@@ -30,7 +30,7 @@ import { RefreshTokenInput } from './dtos/refresh-token.dto';
 export class UserService {
   constructor(
     private readonly users: UserRepository,
-    private readonly jwtService: JwtService,
+    private readonly authService: AuthService,
     @InjectRepository(Test)
     private readonly tests: Repository<Test>,
     @InjectRepository(RefreshToken)
@@ -170,11 +170,11 @@ export class UserService {
         };
       }
 
-      const access_token = this.jwtService.signAccessToken(
+      const access_token = this.authService.signAccessToken(
         user.id,
         /*{ id: user.id }*/
       );
-      const refresh_token = this.jwtService.signRefreshToken(user.id);
+      const refresh_token = this.authService.signRefreshToken(user.id);
 
       this.refreshTokens.save([{ userId: user.id, refresh_token }]);
 
@@ -195,7 +195,7 @@ export class UserService {
     refresh_token,
   }: RefreshTokenInput): Promise<LoginOutput> {
     try {
-      const decoded = this.jwtService.verifyRefreshToken(refresh_token);
+      const decoded = this.authService.verifyRefreshToken(refresh_token);
       if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
         const { userId, refresh_token: refreshToken } =
           await this.refreshTokens.findOne({
@@ -203,8 +203,8 @@ export class UserService {
           });
 
         if (refreshToken === refresh_token) {
-          const access_token = this.jwtService.signAccessToken(userId);
-          const refresh_token = this.jwtService.signRefreshToken(userId);
+          const access_token = this.authService.signAccessToken(userId);
+          const refresh_token = this.authService.signRefreshToken(userId);
 
           this.refreshTokens.save([{ userId, refresh_token }]);
 

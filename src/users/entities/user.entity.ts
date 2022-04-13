@@ -25,7 +25,7 @@ export class User extends CoreEntity {
   @Field((type) => String, { nullable: true })
   @Column({ nullable: true })
   @IsString()
-  profileImg: string;
+  profileImg?: string;
 
   @Field((type) => String)
   @Column({ unique: true }) // email should be unique.
@@ -50,12 +50,12 @@ export class User extends CoreEntity {
   @Field((type) => String, { nullable: true })
   @Column({ nullable: true })
   @IsString()
-  birth: String;
+  birth?: String;
 
   @Field((type) => String, { nullable: true })
   @Column({ nullable: true })
   @IsString()
-  bio: string;
+  bio?: string;
 
   // Other did to me
   @Field((type) => [Test], { nullable: true })
