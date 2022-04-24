@@ -22,7 +22,7 @@ export class GqlAuthGuard extends AuthGuard('jwt') {
   ): TUser {
     if (err || !user) {
       // jwt expired || invalid token || No auth token || jwt malformed
-      console.log(info);
+      // console.log(info);
       throw err || new UnauthorizedException(info);
     } else {
       return user;

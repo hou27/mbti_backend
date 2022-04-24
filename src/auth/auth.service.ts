@@ -15,7 +15,7 @@ export class AuthService {
     /*payload: object*/
   ): string {
     return jwt.sign({ id: userId }, this.options.accessTokenPrivateKey, {
-      expiresIn: '1h',
+      expiresIn: '10s',
     });
   }
 

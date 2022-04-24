@@ -67,6 +67,11 @@ export class User extends CoreEntity {
   @OneToMany((type) => Test, (test) => test.tester)
   userList?: Test[];
 
+  @Field((type) => String, { nullable: true })
+  @Column({ nullable: true })
+  @IsString()
+  refresh_token?: string;
+
   @BeforeInsert() // Entity Listener
   @BeforeUpdate() // password need to hashed before save.
   async hashPassword(): Promise<void> {

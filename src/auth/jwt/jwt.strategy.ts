@@ -18,7 +18,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     // guard 호출 시 해당 strategy의 validate 호출
     const { user } = await this.usersService.findById(payload.id);
     if (user) {
-      console.log('user', user);
       return user; // req.user에 담기게 됨.
     } else {
       throw new UnauthorizedException('User Not Found');

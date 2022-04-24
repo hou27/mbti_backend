@@ -23,7 +23,6 @@ import * as qs from 'qs';
 import * as CryptoJS from 'crypto-js';
 import { DeleteAccountOutput } from './dtos/delete-account.dto';
 import { UserRepository } from './repositories/user.repository';
-import { RefreshToken } from './entities/refresh-token.entity';
 import { RefreshTokenInput } from './dtos/refresh-token.dto';
 
 @Injectable()
@@ -32,10 +31,9 @@ export class UserService {
     private readonly users: UserRepository,
     private readonly authService: AuthService,
     @InjectRepository(Test)
-    private readonly tests: Repository<Test>,
-    @InjectRepository(RefreshToken)
-    private readonly refreshTokens: Repository<RefreshToken>,
-  ) {}
+    private readonly tests: Repository<Test>, // @InjectRepository(RefreshToken)
+  ) // private readonly refreshTokens: Repository<RefreshToken>,
+  {}
 
   async createAccount({
     name,
@@ -176,7 +174,7 @@ export class UserService {
       );
       const refresh_token = this.authService.signRefreshToken(user.id);
 
-      this.refreshTokens.save([{ userId: user.id, refresh_token }]);
+      this.users.save([{ id: user.id, refresh_token }]);
 
       return {
         ok: true,
@@ -197,16 +195,19 @@ export class UserService {
     try {
       const decoded = this.authService.verifyRefreshToken(refresh_token);
       if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
-        const { userId, refresh_token: refreshToken } =
-          await this.refreshTokens.findOne({
-            userId: decoded['id'],
-          });
+        const { refresh_token: refreshToken } = await this.users.findOne({
+          id: decoded['id'],
+        });
 
+        console.log(refreshToken);
+        console.log(refresh_token);
         if (refreshToken === refresh_token) {
-          const access_token = this.authService.signAccessToken(userId);
-          const refresh_token = this.authService.signRefreshToken(userId);
+          const access_token = this.authService.signAccessToken(decoded['id']);
+          const refresh_token = this.authService.signRefreshToken(
+            decoded['id'],
+          );
 
-          this.refreshTokens.save([{ userId, refresh_token }]);
+          this.users.save([{ id: decoded['id'], refresh_token }]);
 
           return {
             ok: true,

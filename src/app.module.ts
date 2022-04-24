@@ -8,7 +8,6 @@ import { ApolloDriver } from '@nestjs/apollo';
 import { User } from './users/entities/user.entity';
 import { TestsModule } from './tests/tests.module';
 import { Test } from './tests/entities/test.entity';
-import { RefreshToken } from './users/entities/refresh-token.entity';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
@@ -48,7 +47,7 @@ import { AuthModule } from './auth/auth.module';
       synchronize: /*process.env.NODE_ENV !== 'prod'*/ true,
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
-      entities: [User, Test, RefreshToken],
+      entities: [User, Test],
       /* <----- Add SSL option */
       ssl: {
         require: true,
