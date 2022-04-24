@@ -29,7 +29,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: Payload) {
     // guard 호출 시 해당 strategy의 validate 호출
-    const user = await this.usersService.findById(payload.id);
+    const { user } = await this.usersService.findById(payload.id);
     if (user) {
       console.log('user', user);
       return user; // req.user에 담기게 됨.

@@ -65,10 +65,9 @@ import { AuthModule } from './auth/auth.module';
       playground: process.env.NODE_ENV !== 'prod',
       driver: ApolloDriver,
       autoSchemaFile: true,
-      context: async ({ req }) => {
-        console.log(req.user);
-        return { user: req['user'] };
-      }, // context is called each req.
+      // context: async ({ req }) => {
+      //   return { user: req['user'] };
+      // }, // context is called each req.
     }),
     AuthModule.forRoot({
       accessTokenPrivateKey: process.env.ACCESS_TOKEN_PRIVATE_KEY,
