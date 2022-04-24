@@ -30,7 +30,6 @@ export class UserResolver {
 
   @Query((returns) => User)
   @UseGuards(GqlAuthGuard)
-  // @UseInterceptors(JwtInterceptor)
   me(@AuthUser() authUser: User) {
     // decorator has to return value
     return authUser;

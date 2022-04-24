@@ -1,11 +1,5 @@
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-// import { join } from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
@@ -65,9 +59,6 @@ import { AuthModule } from './auth/auth.module';
       playground: process.env.NODE_ENV !== 'prod',
       driver: ApolloDriver,
       autoSchemaFile: true,
-      // context: async ({ req }) => {
-      //   return { user: req['user'] };
-      // }, // context is called each req.
     }),
     AuthModule.forRoot({
       accessTokenPrivateKey: process.env.ACCESS_TOKEN_PRIVATE_KEY,
@@ -79,10 +70,4 @@ import { AuthModule } from './auth/auth.module';
   controllers: [],
   providers: [],
 })
-export class AppModule {} //implements NestModule {
-//   configure(consumer: MiddlewareConsumer) {
-//     consumer
-//       .apply(JwtMiddleware)
-//       .forRoutes({ path: '/graphql', method: RequestMethod.POST });
-//   }
-// }
+export class AppModule {}
