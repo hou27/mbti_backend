@@ -58,6 +58,13 @@ import { AuthModule } from './auth/auth.module';
       playground: process.env.NODE_ENV !== 'prod',
       driver: ApolloDriver,
       autoSchemaFile: true,
+      cors: {
+        origin:
+          process.env.NODE_ENV === 'prod'
+            ? 'https://mbti-others.netlify.app/'
+            : 'http://192.168.219.100:3000/',
+        credentials: true,
+      },
     }),
     AuthModule.forRoot({
       accessTokenPrivateKey: process.env.ACCESS_TOKEN_PRIVATE_KEY,
