@@ -3,7 +3,6 @@ import { User } from '../entities/user.entity';
 import * as qs from 'qs';
 import axios from 'axios';
 import { GetAccessTokenOutput, GetUserInfoOutput } from '../dtos/kakao.dto';
-import { AppDataSource } from 'src/data-source';
 import { Repository } from 'typeorm';
 
 /**

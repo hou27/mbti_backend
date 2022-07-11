@@ -13,8 +13,8 @@ import { UsersModule } from './users/users.module';
 import { ApolloDriver } from '@nestjs/apollo';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 import { JwtModule } from './jwt/jwt.module';
-import { User } from './users/entities/user.entity';
 import { TestModule } from './test/test.module';
+import { User } from './users/entities/user.entity';
 import { Test } from './test/entities/test.entity';
 
 @Module({
@@ -55,9 +55,8 @@ import { Test } from './test/entities/test.entity';
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
       entities: [User, Test],
-      /* <----- Add SSL option */
+      /* Add SSL option */
       ssl: {
-        require: true,
         rejectUnauthorized: false,
       },
     }),
