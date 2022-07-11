@@ -19,11 +19,13 @@ import { LoginWithKakaoInput } from './dtos/kakao.dto';
 import * as CryptoJS from 'crypto-js';
 import { DeleteAccountOutput } from './dtos/delete-account.dto';
 import { UserRepository } from './repositories/user.repository';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
   constructor(
-    private readonly users: typeof UserRepository,
+    @InjectRepository(User)
+    private readonly users: UserRepository,
     private readonly jwtService: JwtService,
     @InjectRepository(Test)
     private readonly tests: Repository<Test>,

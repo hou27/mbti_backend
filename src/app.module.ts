@@ -30,7 +30,8 @@ import { Test } from './test/entities/test.entity';
         DB_USERNAME: Joi.string(),
         DB_PW: Joi.string(),
         DB_NAME: Joi.string(),
-        PRIVATE_KEY: Joi.string().required(),
+        ACCESS_TOKEN_PRIVATE_KEY: Joi.string().required(),
+        REFRESH_TOKEN_PRIVATE_KEY: Joi.string().required(),
         MAILGUN_API_KEY: Joi.string().required(),
         MAILGUN_DOMAIN_NAME: Joi.string().required(),
         MAILGUN_FROM_EMAIL: Joi.string().required(),
@@ -67,7 +68,7 @@ import { Test } from './test/entities/test.entity';
       context: async ({ req }) => ({ user: req['user'] }), // context is called each req.
     }),
     JwtModule.forRoot({
-      privateKey: process.env.PRIVATE_KEY,
+      privateKey: process.env.ACCESS_TOKEN_PRIVATE_KEY,
     }),
 
     TestModule,
