@@ -1,10 +1,9 @@
-import { DeleteResult, Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 
 import * as qs from 'qs';
 import axios from 'axios';
 import { GetAccessTokenOutput, GetUserInfoOutput } from '../dtos/kakao.dto';
-import { CustomRepository } from './custom-repository.decorator';
+import { AppDataSource } from 'src/data-source';
 
 /**
  * This Repository is Custom repository extends standard Repository
@@ -12,16 +11,7 @@ import { CustomRepository } from './custom-repository.decorator';
  * in the standard entity repository.
  */
 
-// @EntityRepository(User)
-@CustomRepository(User)
-export class UserRepository extends Repository<User> {
-  // Delete Account by Id
-  async deleteAccountById(userId: number): Promise<DeleteResult> {
-    const deleteResult = await this.delete(userId);
-
-    return deleteResult;
-  }
-
+export const UserRepository = AppDataSource.getRepository(User).extend({
   // Get access token from Kakao Auth Server
   async getAccessToken(code: string): Promise<GetAccessTokenOutput> {
     try {
@@ -44,7 +34,7 @@ export class UserRepository extends Repository<User> {
     } catch (e) {
       return { ok: false, error: e };
     }
-  }
+  },
 
   // Get User Info from Kakao Auth Server
   async getUserInfo(accessToken: String): Promise<GetUserInfoOutput> {
@@ -64,5 +54,5 @@ export class UserRepository extends Repository<User> {
     } catch (e) {
       return { ok: false, error: e };
     }
-  }
-}
+  },
+});
